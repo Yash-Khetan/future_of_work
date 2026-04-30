@@ -1,614 +1,750 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronDown, Send } from 'lucide-react'
-import Navbar from '../components/Navbar.jsx'
-import WorldCard from '../components/WorldCard.jsx'
-import { WORLDS, STATS, STEPS, SOURCES, CHAT_MESSAGES } from '../data.js'
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import Navbar from '../components/Navbar.jsx';
+import WorldCard from '../components/WorldCard.jsx';
+import { WORLDS, STATS } from '../data.js';
 
-export default function Landing({ onEnter }) {
-  const [showChevron, setShowChevron] = useState(false)
+// --- STYLES & FONTS ---
+const GlobalTypography = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@900&display=swap');
+    
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    body {
+      background: #000000 !important;
+      color: #ffffff;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    @keyframes radarPulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+    
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .scanline {
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 255, 209, 0),
+        rgba(0, 255, 209, 0) 2px,
+        rgba(0, 255, 209, 0.03) 2px,
+        rgba(0, 255, 209, 0.03) 4px
+      );
+    }
+    
+    @keyframes rotateShard {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .shard-fragment {
+      transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    
+    .shard-container:hover .frag-1 { transform: translate(-20px, -20px) rotate(-15deg); }
+    .shard-container:hover .frag-2 { transform: translate(30px, -10px) rotate(25deg); }
+    .shard-container:hover .frag-3 { transform: translate(-10px, 30px) rotate(-10deg); }
+    .shard-container:hover .frag-4 { transform: translate(20px, 20px) rotate(15deg); }
+
+    .cube-container {
+      perspective: 1000px;
+    }
+    .cube {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotateCube 10s infinite linear;
+      transition: transform 0.5s ease-out;
+    }
+    .cube-container:hover .cube {
+      transform: scale(1.5);
+    }
+    .cube-face {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: rgba(26, 110, 255, 0.1);
+      border: 1px solid rgba(26, 110, 255, 0.5);
+      box-shadow: 0 0 20px rgba(26, 110, 255, 0.2) inset;
+    }
+    .front  { transform: rotateY(  0deg) translateZ(60px); }
+    .right  { transform: rotateY( 90deg) translateZ(60px); }
+    .back   { transform: rotateY(180deg) translateZ(60px); }
+    .left   { transform: rotateY(-90deg) translateZ(60px); }
+    .top    { transform: rotateX( 90deg) translateZ(60px); }
+    .bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+    @keyframes rotateCube {
+      0% { transform: rotateY(0deg) rotateX(20deg); }
+      100% { transform: rotateY(360deg) rotateX(20deg); }
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .cursor-blink { animation: blink 1s step-end infinite; }
+
+    .hero-bottom-lines {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      justify-content: center;
+    }
+    .hero-slash {
+      display: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(64px, 10vw, 120px);
+      color: rgba(255,255,255,0.2);
+      font-weight: 900;
+    }
+    @media (min-width: 1400px) {
+      .hero-bottom-lines {
+        flex-direction: row !important;
+        gap: 20px;
+        align-items: baseline;
+      }
+      .hero-slash {
+        display: inline-block !important;
+      }
+    }
+  `}</style>
+);
+
+// --- COMPONENT: Particle Field ---
+const ParticleField = () => {
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowChevron(true), 1500)
-    return () => clearTimeout(t)
-  }, [])
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let particles = [];
+    const NUM_PARTICLES = 800;
+
+    let mouse = { x: -1000, y: -1000 };
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    const initParticles = () => {
+      particles = [];
+      for (let i = 0; i < NUM_PARTICLES; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+        });
+      }
+    };
+
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    window.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+
+    resize();
+    initParticles();
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+
+      particles.forEach(p => {
+        // Drift
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        // Mouse repulsion
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 120) {
+          const force = (1 - dist / 120) * 8;
+          p.x += (dx / dist) * force;
+          p.y += (dy / dist) * force;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   return (
-    <div>
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        top: 0, left: 0,
+        width: '100%', height: '100%',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}
+    />
+  );
+};
+
+// --- COMPONENT: Radar Button ---
+const RadarButton = ({ onClick }) => {
+  const ref = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springConfig = { damping: 15, stiffness: 150, mass: 0.5 };
+  const smoothX = useSpring(x, springConfig);
+  const smoothY = useSpring(y, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const dx = e.clientX - centerX;
+      const dy = e.clientY - centerY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 100) {
+        x.set(dx * 0.2);
+        y.set(dy * 0.2);
+      } else {
+        x.set(0);
+        y.set(0);
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [x, y]);
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x: smoothX, y: smoothY, position: 'relative', display: 'inline-block', zIndex: 10 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+    >
+      <div style={{
+        position: 'absolute', top: -20, left: -20, right: -20, bottom: -20,
+        border: `1px solid ${isHovered ? '#00FFD1' : 'rgba(255,255,255,0.2)'}`,
+        borderRadius: '50%',
+        animation: `radarPulse ${isHovered ? '0.5s' : '2s'} infinite linear`,
+        pointerEvents: 'none'
+      }} />
+      <div style={{
+        position: 'absolute', top: -10, left: -10, right: -10, bottom: -10,
+        border: `1px solid ${isHovered ? '#00FFD1' : 'rgba(255,255,255,0.4)'}`,
+        borderRadius: '50%',
+        animation: `radarPulse ${isHovered ? '0.5s' : '2s'} infinite linear 0.5s`,
+        pointerEvents: 'none'
+      }} />
+
+      <button style={{
+        width: 140, height: 140, borderRadius: '50%',
+        background: isHovered ? 'rgba(0, 255, 209, 0.1)' : '#000',
+        border: `1px solid ${isHovered ? '#00FFD1' : '#333'}`,
+        color: isHovered ? '#00FFD1' : '#fff',
+        cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexDirection: 'column',
+        transition: 'all 0.3s ease',
+        textTransform: 'uppercase',
+        outline: 'none',
+        backdropFilter: 'blur(4px)'
+      }}>
+        <span className="font-mono" style={{ fontSize: 10, letterSpacing: 2, textAlign: 'center', lineHeight: 1.4, fontWeight: 700 }}>
+          Initiate<br />Simulation
+        </span>
+      </button>
+    </motion.div>
+  );
+};
+
+// --- COMPONENT: Slot Counter ---
+const SlotCounter = ({ target, value }) => {
+  return <span className="font-mono">{value.toLocaleString()}</span>;
+};
+
+// --- COMPONENT: Terminal Chat ---
+const TerminalChat = () => {
+  const [lines, setLines] = useState([]);
+  const [activeNodes, setActiveNodes] = useState([]);
+
+  const initSequence = [
+    "> AANYA_v2.1 [INITIALIZED]",
+    "> CONNECTING TO WEF_DATABASE... [OK]",
+    "> CONNECTING TO MCKINSEY_GI... [OK]",
+    "> READY."
+  ];
+
+  useEffect(() => {
+    let currentLine = 0;
+    let currentChar = 0;
+    let timeoutId;
+
+    const typeNextChar = () => {
+      if (currentLine >= initSequence.length) return;
+
+      const text = initSequence[currentLine];
+      if (currentChar <= text.length) {
+        setLines(prev => {
+          const newLines = [...prev];
+          newLines[currentLine] = text.substring(0, currentChar);
+          return newLines;
+        });
+        currentChar++;
+        timeoutId = setTimeout(typeNextChar, 30);
+      } else {
+        currentLine++;
+        currentChar = 0;
+        timeoutId = setTimeout(typeNextChar, 100);
+      }
+    };
+
+    typeNextChar();
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const handleNodeClick = (nodeName) => {
+    // TODO: Add terminal hum audio via Web Audio API
+    setActiveNodes(prev => [...prev, nodeName]);
+
+    const stats = {
+      'WEF DATA': '170M new roles emerge by 2030.',
+      'McKINSEY': '375M workers need to switch occupations.',
+      'INDIA CONTEXT': 'Only 42.6% of Indian grads employable.'
+    };
+
+    setLines(prev => [...prev, `$ USER: QUERY [${nodeName}]`]);
+
+    setTimeout(() => {
+      setLines(prev => [...prev, `> AANYA: ${stats[nodeName]}`]);
+    }, 500);
+
+    setTimeout(() => {
+      setActiveNodes(prev => prev.filter(n => n !== nodeName));
+    }, 2000);
+  };
+
+  return (
+    <div className="font-mono" style={{
+      background: '#000',
+      border: '1px solid rgba(0,255,209,0.2)',
+      boxShadow: '0 0 60px rgba(0,255,209,0.05)',
+      position: 'relative',
+      height: 400,
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <div className="scanline" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }} />
+
+      {/* Terminal Output */}
+      <div style={{ padding: 24, flex: 1, overflowY: 'auto', zIndex: 2, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {lines.map((line, i) => (
+          <div key={i} style={{
+            color: (line && (line.startsWith('> AANYA:') || (line.startsWith('>') && !line.includes('USER:')))) ? '#00FFD1' : 'rgba(255,255,255,0.6)',
+            fontSize: 13,
+            lineHeight: 1.5,
+          }}>
+            {line}
+          </div>
+        ))}
+        <div style={{ color: '#00FFD1' }}>
+          <span className="cursor-blink">█</span>
+        </div>
+      </div>
+
+      {/* Interactive Nodes */}
+      <div style={{
+        padding: 16,
+        borderTop: '1px solid rgba(0,255,209,0.2)',
+        display: 'flex',
+        gap: 16,
+        zIndex: 2,
+        background: 'rgba(0,0,0,0.8)'
+      }}>
+        {['WEF DATA', 'McKINSEY', 'INDIA CONTEXT'].map(node => (
+          <button
+            key={node}
+            onClick={() => handleNodeClick(node)}
+            style={{
+              background: activeNodes.includes(node) ? 'rgba(0,255,209,0.2)' : 'transparent',
+              border: `1px solid ${activeNodes.includes(node) ? '#00FFD1' : 'rgba(255,255,255,0.2)'}`,
+              color: activeNodes.includes(node) ? '#00FFD1' : 'rgba(255,255,255,0.6)',
+              padding: '6px 12px',
+              fontSize: 11,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              borderRadius: 4,
+              display: 'flex', alignItems: 'center', gap: 6,
+              outline: 'none'
+            }}
+          >
+            <div style={{
+              width: 6, height: 6, borderRadius: '50%',
+              background: activeNodes.includes(node) ? '#00FFD1' : 'rgba(255,255,255,0.4)',
+              boxShadow: activeNodes.includes(node) ? '0 0 8px #00FFD1' : 'none',
+              animation: activeNodes.includes(node) ? 'blink 0.5s infinite' : 'none'
+            }} />
+            [{node}]
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// --- MAIN LANDING COMPONENT ---
+export default function Landing({ onEnter }) {
+  // Hero section scroll logic (300vh tall)
+  const heroRef = useRef(null);
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end end"] });
+
+  const heroLine1Blur = useTransform(heroProgress, [0, 0.2], [0, 20]);
+  const heroLine1Opacity = useTransform(heroProgress, [0, 0.2], [1, 0]);
+
+  const heroLine2Blur = useTransform(heroProgress, [0.1, 0.3], [0, 20]);
+  const heroLine2Opacity = useTransform(heroProgress, [0.1, 0.3], [1, 0]);
+
+  const heroLine3Blur = useTransform(heroProgress, [0.2, 0.5], [20, 0]);
+  const heroLine3Opacity = useTransform(heroProgress, [0.2, 0.5], [0, 1]);
+  const heroLine3Scale = useTransform(heroProgress, [0.2, 0.4, 0.5], [0.9, 1.1, 1]);
+
+  const heroLine4Y = useTransform(heroProgress, [0.6, 0.8], [60, 0]);
+  const heroLine4Opacity = useTransform(heroProgress, [0.6, 0.8], [0, 1]);
+  const heroLine4PathOffset = useTransform(heroProgress, [0.6, 0.8], [1, 0]);
+
+  // Section 2 Progress (300vh tall)
+  const s2Ref = useRef(null);
+  const { scrollYProgress: s2Progress } = useScroll({ target: s2Ref, offset: ["start start", "end end"] });
+
+  const [numValue, setNumValue] = useState(92000000);
+  const [numText, setNumText] = useState('JOBS DISPLACED');
+  const [numColor, setNumColor] = useState('#ffffff');
+
+  useEffect(() => {
+    return s2Progress.on('change', (v) => {
+      if (v > 0.3) {
+        // Scramble to target
+        const diff = 170000000 - 92000000;
+        const progress = Math.min((v - 0.3) * 2.5, 1); // 0 to 1 rapidly
+        setNumValue(Math.floor(92000000 + diff * progress));
+        if (progress > 0.8) {
+          setNumText('ROLES CREATED');
+          setNumColor('#00FFD1');
+        } else {
+          setNumText('JOBS DISPLACED');
+          setNumColor('#ffffff');
+        }
+      } else {
+        setNumValue(92000000);
+        setNumText('JOBS DISPLACED');
+        setNumColor('#ffffff');
+      }
+    });
+  }, [s2Progress]);
+
+  const s2LineScale = useTransform(s2Progress, [0.1, 0.3], [0, 1]);
+
+  // Section 3: The 4 Worlds Sticky Scroll
+  const s3Ref = useRef(null);
+  const { scrollYProgress: s3Progress } = useScroll({ target: s3Ref, offset: ["start start", "end end"] });
+
+  return (
+    <>
+      <GlobalTypography />
       <Navbar />
 
-      {/* ─── HERO ─── */}
-      <section style={{
-        position: 'relative',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#0D1B2A',
-        overflow: 'hidden',
-        padding: '0 20px',
-      }}>
-        {/* Animated mesh gradient */}
-        <div className="hero-mesh">
-          <div className="hero-mesh-extra" />
-          <div className="hero-mesh-extra2" />
+      {/* SECTION 1: HERO */}
+      <section ref={heroRef} style={{ height: '300vh', position: 'relative' }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <ParticleField />
+
+          <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', width: '100%', padding: '0 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <motion.div style={{ filter: `blur(${heroLine1Blur}px)`, opacity: heroLine1Opacity }} className="font-display">
+              <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: 0, letterSpacing: '-5px' }}>The future of work</h1>
+            </motion.div>
+
+            <motion.div style={{ filter: `blur(${heroLine2Blur}px)`, opacity: heroLine2Opacity }} className="font-display">
+              <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: 0, letterSpacing: '-5px', color: 'rgba(255,255,255,0.4)' }}>isn't approaching.</h1>
+            </motion.div>
+
+            <div className="hero-bottom-lines">
+              <motion.div style={{ filter: `blur(${heroLine3Blur}px)`, opacity: heroLine3Opacity, scale: heroLine3Scale }} className="font-display">
+                <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: '0', letterSpacing: '-5px', color: '#00FFD1' }}>It's already executing.</h1>
+              </motion.div>
+
+              <motion.div className="hero-slash" style={{ opacity: heroLine3Opacity }}>/</motion.div>
+
+              <motion.div style={{ y: heroLine4Y, opacity: heroLine4Opacity }} className="font-display">
+                <h1 style={{ fontSize: 'clamp(48px, 9vw, 110px)', margin: '0', letterSpacing: '-5px', color: '#fff' }}>
+                  It's already{' '}
+                  <span style={{ position: 'relative', display: 'inline-block' }}>
+                    here.
+                    <svg
+                      viewBox="0 0 100 20"
+                      style={{ position: 'absolute', left: -5, right: -10, bottom: -2, width: 'calc(100% + 15px)', height: '20px', overflow: 'visible', zIndex: -1 }}
+                    >
+                      <motion.path
+                        d="M 5 10 Q 30 18 60 12 T 95 8"
+                        fill="none"
+                        stroke="#00FFD1"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        style={{
+                          pathLength: 1,
+                          pathOffset: heroLine4PathOffset
+                        }}
+                      />
+                    </svg>
+                  </span>
+                </h1>
+              </motion.div>
+            </div>
+
+            <div style={{ position: 'absolute', bottom: '-40vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }}>
+              <RadarButton onClick={onEnter} />
+              <a
+                href="#research"
+                className="font-mono"
+                style={{ color: '#fff', textDecoration: 'none', fontSize: 12, letterSpacing: 4, opacity: 0.6 }}
+              >
+                [ ACCESS DATA ]
+              </a>
+            </div>
+          </div>
         </div>
-
-        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 800 }}>
-          {/* Live badge */}
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '6px 16px',
-            borderRadius: 24,
-            border: '1px solid rgba(0,194,168,0.4)',
-            background: 'rgba(0,194,168,0.08)',
-            marginBottom: 32,
-            animation: 'fadeInUp 0.6s ease-out',
-          }}>
-            <span style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: '#00C2A8',
-              animation: 'pulse 2s ease-in-out infinite',
-              display: 'inline-block',
-            }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#00C2A8', letterSpacing: '1px', textTransform: 'uppercase' }}>
-              Live Simulation
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h1 style={{
-            fontSize: 'clamp(40px, 7vw, 76px)',
-            fontWeight: 900,
-            lineHeight: 1.08,
-            letterSpacing: '-2px',
-            marginBottom: 28,
-            animation: 'fadeInUp 0.8s ease-out 0.1s both',
-          }}>
-            The future of work<br />
-            isn't coming.<br />
-            <span style={{ color: '#1A6EFF' }}>It's already here.</span>
-          </h1>
-
-          {/* Subheadline */}
-          <p style={{
-            fontSize: 'clamp(15px, 2vw, 18px)',
-            color: '#64748B',
-            maxWidth: 560,
-            margin: '0 auto 36px',
-            lineHeight: 1.7,
-            animation: 'fadeInUp 0.8s ease-out 0.2s both',
-          }}>
-            92 million jobs will be displaced by 2030.
-            170 million new ones will be created.
-            Which side of that number are your decisions on?
-          </p>
-
-          {/* CTAs */}
-          <div style={{
-            display: 'flex',
-            gap: 16,
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            marginBottom: 32,
-            animation: 'fadeInUp 0.8s ease-out 0.3s both',
-          }}>
-            <button className="btn-primary" onClick={onEnter} id="enter-simulation-btn">
-              Enter Simulation →
-            </button>
-            <button
-              className="btn-outline"
-              onClick={() => document.getElementById('research')?.scrollIntoView({ behavior: 'smooth' })}
-              id="view-research-btn"
-            >
-              View Research ↓
-            </button>
-          </div>
-
-          {/* Trust line */}
-          <p style={{
-            fontSize: 11,
-            color: 'rgba(100,116,139,0.6)',
-            animation: 'fadeInUp 0.8s ease-out 0.4s both',
-            letterSpacing: '0.3px',
-          }}>
-            Based on WEF Future of Jobs 2025 &nbsp;·&nbsp; McKinsey Global Institute &nbsp;·&nbsp; PwC Workforce 2030 &nbsp;·&nbsp; India Skills Report
-          </p>
-        </div>
-
-        {/* Scroll indicator */}
-        {showChevron && (
-          <div style={{
-            position: 'absolute',
-            bottom: 40,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            animation: 'bounceDown 2s ease-in-out infinite',
-            zIndex: 1,
-          }}>
-            <ChevronDown size={28} color="rgba(255,255,255,0.4)" />
-          </div>
-        )}
       </section>
 
-      {/* ─── STATS TICKER ─── */}
-      <section style={{
-        background: '#0f2035',
-        padding: '60px 40px',
-      }}>
-        <div style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: 24,
-        }}>
-          {STATS.map((s, i) => (
-            <div
-              key={i}
-              className="card-hover"
+      {/* SECTION 2: REALITY CHECK */}
+      <section ref={s2Ref} style={{ height: '300vh', position: 'relative' }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 40px', overflow: 'hidden' }}>
+
+          {/* Background Graph SVG */}
+          <motion.svg
+            style={{ position: 'absolute', right: 0, bottom: 0, width: '100%', height: '50%', opacity: 0.06, zIndex: 0 }}
+            viewBox="0 0 100 100" preserveAspectRatio="none"
+          >
+            <motion.path
+              d="M0,100 C30,100 40,80 60,80 C70,80 80,40 100,0"
+              fill="none" stroke="#fff" strokeWidth="1"
+              style={{ pathLength: s2Progress }}
+            />
+          </motion.svg>
+
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+            <motion.div
+              className="font-mono"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                borderRadius: 14,
-                padding: '28px 24px',
-                borderTop: `3px solid ${s.color}`,
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderTopColor: s.color,
-                transition: 'all 0.2s ease',
-                cursor: 'default',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = `0 12px 40px ${s.color}25`
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = ''
-                e.currentTarget.style.boxShadow = ''
+                fontSize: 'clamp(80px, 15vw, 160px)',
+                fontWeight: 700,
+                color: numColor,
+                lineHeight: 1,
+                letterSpacing: '-4px'
               }}
             >
-              <div style={{ fontSize: 42, fontWeight: 800, color: s.color, marginBottom: 6, letterSpacing: '-1px' }}>
-                {s.value}
+              <SlotCounter value={numValue} target={170000000} />
+            </motion.div>
+
+            <motion.div
+              className="font-mono"
+              style={{ fontSize: 14, letterSpacing: 6, color: numColor, marginTop: 20 }}
+            >
+              {numText}
+            </motion.div>
+
+            <motion.div
+              style={{
+                height: 1, background: 'rgba(255,255,255,0.2)', width: '100%', marginTop: 60,
+                scaleX: s2LineScale, transformOrigin: 'left'
+              }}
+            />
+
+            {/* Marquee */}
+            <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', marginTop: 30, opacity: 0.4 }}>
+              <div
+                className="font-mono"
+                style={{
+                  display: 'inline-block',
+                  animation: 'marquee 20s linear infinite',
+                  fontSize: 14,
+                  letterSpacing: 4
+                }}
+              >
+                WEF 2025 · MCKINSEY GLOBAL INSTITUTE · PwC WORKFORCE HORIZONS · INDIA SKILLS REPORT · WEF 2025 · MCKINSEY GLOBAL INSTITUTE · PwC WORKFORCE HORIZONS · INDIA SKILLS REPORT ·
               </div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 12, lineHeight: 1.4 }}>
-                {s.label}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: THE FOUR WORLDS */}
+      <section ref={s3Ref} style={{ position: 'relative', background: '#000' }}>
+        <div style={{ display: 'flex' }}>
+
+          {/* Left Sticky Column */}
+          <div style={{ width: '40%', height: '100vh', position: 'sticky', top: 0, padding: '80px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className="font-mono" style={{ fontSize: 12, letterSpacing: 4, color: 'rgba(255,255,255,0.6)' }}>CHOOSE YOUR</div>
+            <div className="font-display" style={{ fontSize: 'clamp(100px, 15vw, 200px)', lineHeight: 0.9, letterSpacing: '-8px' }}>2030</div>
+
+            <div style={{ width: 4, height: 200, background: 'rgba(255,255,255,0.1)', marginTop: 40, borderRadius: 2 }}>
+              <motion.div style={{ width: '100%', height: '100%', background: '#fff', scaleY: s3Progress, transformOrigin: 'top' }} />
+            </div>
+          </div>
+
+          {/* Right Scrolling Column */}
+          <div style={{ width: '60%' }}>
+
+            {/* Red World */}
+            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(255,45,85,0.08) 0%, transparent 60%)', pointerEvents: 'none' }} />
+              <div className="shard-container" style={{ position: 'absolute', right: '10%', top: '20%', width: 200, height: 200, animation: 'rotateShard 20s linear infinite' }}>
+                <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', overflow: 'visible', filter: 'drop-shadow(0 0 20px #FF2D55)' }}>
+                  <polygon className="shard-fragment frag-1" points="50,10 80,40 50,70 20,40" fill="none" stroke="#FF2D55" strokeWidth="1" />
+                  <polygon className="shard-fragment frag-2" points="55,15 85,45 55,75" fill="none" stroke="#FF2D55" strokeWidth="1" />
+                  <polygon className="shard-fragment frag-3" points="45,15 15,45 45,75" fill="none" stroke="#FF2D55" strokeWidth="1" />
+                  <circle className="shard-fragment frag-4" cx="50" cy="40" r="10" fill="none" stroke="#FF2D55" strokeWidth="1" />
+                </svg>
               </div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>
-                {s.source}
+              <div style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 10 }}>
+                <WorldCard world={WORLDS[0]} variant="landing" onClick={() => onEnter(WORLDS[0])} />
               </div>
+            </div>
+
+            {/* Blue World */}
+            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div className="cube-container" style={{ position: 'absolute', right: '20%', top: '30%', zIndex: 0 }}>
+                <div className="cube">
+                  <div className="cube-face front"></div>
+                  <div className="cube-face back"></div>
+                  <div className="cube-face right"></div>
+                  <div className="cube-face left"></div>
+                  <div className="cube-face top"></div>
+                  <div className="cube-face bottom"></div>
+                </div>
+              </div>
+              <div style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 10 }}>
+                <WorldCard world={WORLDS[1]} variant="landing" onClick={() => WORLDS[1].available && onEnter(WORLDS[1])} />
+              </div>
+            </div>
+
+            {/* Green World */}
+            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 10 }}>
+                <WorldCard world={WORLDS[2]} variant="landing" dimmed={!WORLDS[2].available} onClick={() => WORLDS[2].available && onEnter(WORLDS[2])} />
+              </div>
+            </div>
+
+            {/* Yellow World */}
+            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 10 }}>
+                <WorldCard world={WORLDS[3]} variant="landing" dimmed={!WORLDS[3].available} onClick={() => WORLDS[3].available && onEnter(WORLDS[3])} />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: MEET AANYA */}
+      <section style={{ padding: '120px 40px', background: '#000', borderTop: '1px solid #111' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+          <div>
+            <div className="font-mono" style={{ color: '#00FFD1', fontSize: 12, letterSpacing: 2, marginBottom: 20 }}>[ AI_ADVISOR_LINK ]</div>
+            <h2 className="font-display" style={{ fontSize: 'clamp(40px, 5vw, 60px)', letterSpacing: '-2px', marginBottom: 24 }}>Meet Aanya.</h2>
+            <p className="font-mono" style={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, fontSize: 14 }}>
+              She isn't just a chatbot. She's embedded with 50,000 words of workforce research.
+              She analyzes every decision you make in real-time against global datasets.
+            </p>
+          </div>
+          <TerminalChat />
+        </div>
+      </section>
+
+      {/* STATS TICKER */}
+      <section style={{ padding: '80px 40px', borderTop: '1px solid #111', background: '#000' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
+          {STATS.map((s, i) => (
+            <div key={i} style={{ borderTop: `2px solid ${s.color}`, paddingTop: 20 }}>
+              <div className="font-mono" style={{ fontSize: 40, fontWeight: 700, color: s.color, marginBottom: 10 }}>{s.value}</div>
+              <div className="font-mono" style={{ fontSize: 12, color: '#fff', marginBottom: 8, letterSpacing: 1 }}>{s.label}</div>
+              <div className="font-mono" style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{s.source}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── FOUR WORLDS ─── */}
-      <section className="section-light" style={{ padding: '100px 40px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, color: '#0D1B2A', marginBottom: 16, letterSpacing: '-1px' }}>
-              Choose Your World
-            </h2>
-            <p style={{ fontSize: 16, color: '#64748B', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
-              Four possible futures. All of them plausible.
-              Which one will your decisions create?
-            </p>
-          </div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 24,
-          }}>
-            {WORLDS.map((w) => (
-              <WorldCard key={w.id} world={w} variant="landing" onClick={w.available ? onEnter : undefined} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── HOW IT WORKS ─── */}
-      <section className="section-dark" style={{ padding: '100px 40px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 16, letterSpacing: '-1px' }}>
-              How It Works
-            </h2>
-            <p style={{ fontSize: 16, color: '#64748B', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-              Six steps. Twenty minutes. A completely different
-              understanding of what's coming.
-            </p>
-          </div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: 20,
-            position: 'relative',
-          }}>
-            {STEPS.map((s, i) => (
-              <div key={i} style={{
-                textAlign: 'center',
-                padding: 20,
-                position: 'relative',
-              }}>
-                {/* Dotted connector */}
-                {i < STEPS.length - 1 && (
-                  <div style={{
-                    position: 'absolute',
-                    top: 28,
-                    right: -12,
-                    width: 24,
-                    borderTop: '2px dashed rgba(255,255,255,0.12)',
-                    display: window.innerWidth < 768 ? 'none' : 'block',
-                  }} />
-                )}
-                <div style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  background: 'rgba(26,110,255,0.15)',
-                  color: '#1A6EFF',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                  fontSize: 18,
-                  marginBottom: 16,
-                  border: '1px solid rgba(26,110,255,0.3)',
-                }}>
-                  {s.num}
-                </div>
-                <h4 style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: '#fff' }}>
-                  {s.title}
-                </h4>
-                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>
-                  {s.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── RESEARCH FOUNDATION ─── */}
-      <section id="research" className="section-light" style={{ padding: '100px 40px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, color: '#0D1B2A', marginBottom: 16, letterSpacing: '-1px' }}>
-              Grounded in Global Research
-            </h2>
-            <p style={{ fontSize: 16, color: '#64748B', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
-              Every scenario, every number, every consequence
-              is traceable to a primary source.
-            </p>
-          </div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: 24,
-          }}>
-            {SOURCES.map((src, i) => (
-              <div
-                key={i}
-                className="card-hover"
-                style={{
-                  background: '#fff',
-                  borderRadius: 14,
-                  padding: '32px 24px',
-                  border: '1px solid #e2e8f0',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)'
-                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.08)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = ''
-                  e.currentTarget.style.boxShadow = ''
-                }}
-              >
-                <div style={{
-                  fontSize: 28,
-                  fontWeight: 900,
-                  color: src.color,
-                  marginBottom: 12,
-                  letterSpacing: '-0.5px',
-                }}>
-                  {src.abbr}
-                </div>
-                <div style={{
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: '#1A6EFF',
-                  marginBottom: 8,
-                }}>
-                  {src.stat}
-                </div>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.5, marginBottom: 8 }}>
-                  {src.desc}
-                </p>
-                <p style={{ fontSize: 11, color: '#94a3b8' }}>
-                  {src.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── AANYA PREVIEW ─── */}
-      <section className="section-dark" style={{ padding: '100px 40px' }}>
-        <div style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
-          gap: 60,
-          alignItems: 'center',
-        }}>
-          {/* Left text */}
-          <div>
-            <span style={{
-              display: 'inline-block',
-              fontSize: 11,
-              fontWeight: 700,
-              color: '#00C2A8',
-              background: 'rgba(0,194,168,0.1)',
-              border: '1px solid rgba(0,194,168,0.25)',
-              padding: '5px 14px',
-              borderRadius: 20,
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: 20,
-            }}>
-              AI Advisor
-            </span>
-            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 12, letterSpacing: '-1px' }}>
-              Meet Aanya
-            </h2>
-            <p style={{ fontSize: 18, color: '#00C2A8', fontWeight: 600, marginBottom: 20 }}>
-              Your AI-powered future-of-work advisor
-            </p>
-            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 28, maxWidth: 440 }}>
-              Aanya is embedded with 50,000 words of workforce research.
-              She explains the data behind every decision you make, answers your
-              questions, and connects global trends to India's reality.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-              {['✓ Powered by Claude AI', '✓ Backed by WEF & McKinsey data', '✓ India-contextualised insights'].map((t, i) => (
-                <span key={i} style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: 'rgba(255,255,255,0.7)',
-                  background: 'rgba(255,255,255,0.06)',
-                  padding: '6px 14px',
-                  borderRadius: 20,
-                  border: '1px solid rgba(255,255,255,0.1)',
-                }}>
-                  {t}
-                </span>
-              ))}
+      {/* INDIA FOCUS */}
+      <section style={{ padding: '120px 40px', background: '#000', position: 'relative', overflow: 'hidden' }}>
+        <svg viewBox="0 0 100 100" style={{ position: 'absolute', right: '-10%', top: '10%', width: '60%', height: '80%', opacity: 0.04, fill: 'none', stroke: '#fff' }}>
+          <path d="M50,10 L80,30 L70,80 L40,90 L20,60 Z" strokeWidth="0.5" />
+        </svg>
+        <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <h2 className="font-display" style={{ fontSize: 'clamp(40px, 5vw, 60px)', letterSpacing: '-2px', marginBottom: 60 }}>Built for India's Reality.</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 40 }}>
+            <div>
+              <div className="font-mono" style={{ fontSize: 48, fontWeight: 700, marginBottom: 10 }}>70M+</div>
+              <div className="font-mono" style={{ fontSize: 12, opacity: 0.6, lineHeight: 1.5 }}>Workers at risk of displacement by 2030</div>
             </div>
-          </div>
-
-          {/* Right chat interface */}
-          <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            borderRadius: 20,
-            border: '1px solid rgba(255,255,255,0.08)',
-            overflow: 'hidden',
-            backdropFilter: 'blur(12px)',
-            maxWidth: 420,
-          }}>
-            {/* Chat header */}
-            <div style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-            }}>
-              <div style={{
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #00C2A8, #1A6EFF)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                fontWeight: 700,
-              }}>
-                A
-              </div>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Aanya</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    background: '#00C2A8',
-                    display: 'inline-block',
-                  }} />
-                  <span style={{ fontSize: 11, color: '#00C2A8' }}>Online</span>
-                </div>
-              </div>
+            <div>
+              <div className="font-mono" style={{ fontSize: 48, fontWeight: 700, marginBottom: 10 }}>1M+</div>
+              <div className="font-mono" style={{ fontSize: 12, opacity: 0.6, lineHeight: 1.5 }}>AI-related jobs opening in India by 2026</div>
             </div>
-
-            {/* Messages */}
-            <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 360, overflowY: 'auto' }}>
-              {CHAT_MESSAGES.map((msg, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: 'flex',
-                    justifyContent: msg.from === 'user' ? 'flex-end' : 'flex-start',
-                    animation: `typing 0.4s ease-out ${i * 0.15}s both`,
-                  }}
-                >
-                  <div style={{
-                    maxWidth: '85%',
-                    padding: '12px 16px',
-                    borderRadius: msg.from === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    background: msg.from === 'user'
-                      ? 'rgba(26,110,255,0.2)'
-                      : 'rgba(255,255,255,0.06)',
-                    border: msg.from === 'user'
-                      ? '1px solid rgba(26,110,255,0.3)'
-                      : '1px solid rgba(255,255,255,0.06)',
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                    color: 'rgba(255,255,255,0.85)',
-                  }}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Input bar */}
-            <div style={{
-              padding: '12px 16px',
-              borderTop: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex',
-              gap: 10,
-              alignItems: 'center',
-            }}>
-              <input
-                type="text"
-                placeholder="Ask Aanya anything about the future of work..."
-                readOnly
-                style={{
-                  flex: 1,
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 10,
-                  padding: '10px 14px',
-                  color: '#fff',
-                  fontSize: 13,
-                  outline: 'none',
-                  fontFamily: 'inherit',
-                }}
-              />
-              <button style={{
-                width: 38,
-                height: 38,
-                borderRadius: 10,
-                background: '#1A6EFF',
-                border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}>
-                <Send size={16} color="#fff" />
-              </button>
+            <div>
+              <div className="font-mono" style={{ fontSize: 48, fontWeight: 700, marginBottom: 10 }}>#3</div>
+              <div className="font-mono" style={{ fontSize: 12, opacity: 0.6, lineHeight: 1.5 }}>India's rank in global AI talent pool</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── INDIA FOCUS ─── */}
-      <section style={{
-        background: 'linear-gradient(135deg, #1A6EFF, #0052cc)',
-        padding: '80px 40px',
-        color: '#fff',
-      }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 48, letterSpacing: '-1px' }}>
-            Built for India's Reality
-          </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 40,
-            marginBottom: 48,
-          }}>
-            {[
-              { val: '70M+', label: 'Workers at risk of displacement by 2030' },
-              { val: '1M+', label: 'AI-related jobs opening in India by 2026' },
-              { val: '#3', label: "India's rank in global AI talent pool" },
-            ].map((s, i) => (
-              <div key={i}>
-                <div style={{ fontSize: 48, fontWeight: 900, marginBottom: 8, letterSpacing: '-2px' }}>{s.val}</div>
-                <div style={{ fontSize: 14, opacity: 0.8, lineHeight: 1.5 }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <p style={{ fontSize: 15, opacity: 0.85, maxWidth: 640, margin: '0 auto', lineHeight: 1.7 }}>
-            WorkWorld 2030 isn't a Western case study with an India footnote.
-            Every scenario is calibrated for the Indian business context —
-            from startup culture in Bengaluru to BFSI in Mumbai to
-            manufacturing corridors in Pune and Chennai.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── FINAL CTA ─── */}
-      <section className="section-dark" style={{ padding: '120px 40px', textAlign: 'center' }}>
-        <h2 style={{
-          fontSize: 'clamp(28px, 5vw, 52px)',
-          fontWeight: 800,
-          lineHeight: 1.15,
-          marginBottom: 36,
-          letterSpacing: '-1.5px',
-        }}>
+      {/* FINAL CTA */}
+      <section style={{ padding: '160px 40px', textAlign: 'center', borderTop: '1px solid #111' }}>
+        <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 80px)', letterSpacing: '-3px', marginBottom: 40 }}>
           Stop reading about the future.<br />
-          <span style={{ color: '#1A6EFF' }}>Start navigating it.</span>
+          <span style={{ color: '#00FFD1' }}>Start navigating it.</span>
         </h2>
-        <button
-          className="btn-primary"
-          onClick={onEnter}
-          style={{ fontSize: 18, padding: '18px 44px', marginBottom: 20 }}
-          id="final-enter-simulation-btn"
-        >
-          Enter Simulation →
-        </button>
-        <p style={{ fontSize: 13, color: '#64748B' }}>
-          Free · No login required · Built for SP Jain MBA cohort
-        </p>
+        <RadarButton onClick={onEnter} />
       </section>
-
-      {/* ─── FOOTER ─── */}
-      <footer style={{
-        background: '#0a1520',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        padding: '40px 40px 24px',
-      }}>
-        <div style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 20,
-          marginBottom: 24,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <span style={{ fontWeight: 800, fontSize: 16, color: '#fff' }}>WorkWorld</span>
-            <span style={{ fontWeight: 800, fontSize: 16, color: '#1A6EFF' }}>2030</span>
-          </div>
-          <span style={{ fontSize: 12, color: '#64748B', textAlign: 'center' }}>
-            Built on WEF · McKinsey · PwC · India Skills Report research
-          </span>
-          <span style={{ fontSize: 12, color: '#64748B' }}>
-            SP Jain School of Global Management · 2026
-          </span>
-        </div>
-        <div style={{
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          paddingTop: 16,
-          textAlign: 'center',
-        }}>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)' }}>
-            MVP v1.0 · Red World available now
-          </span>
-        </div>
-      </footer>
-    </div>
-  )
+    </>
+  );
 }

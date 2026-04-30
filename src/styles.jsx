@@ -4,25 +4,19 @@ export function GlobalStyles() {
   return (
     <style>{`
       :root {
-        --dark: #0D1B2A;
-        --accent: #1A6EFF;
-        --teal: #00C2A8;
-        --orange: #FF6B35;
-        --light-bg: #F4F6FA;
-        --card-bg: #EAF1FF;
-        --muted: #64748B;
-        --border: #CBD5E1;
+        --dark: #050505;
+        --darker: #000000;
+        --accent: #F4F4F5;
+        --teal: #00E5FF;
+        --orange: #FF4444;
+        --light-bg: #FAFAFA;
+        --card-bg: #0A0A0A;
+        --muted: #888888;
+        --border: #222222;
         --red-world: #FF4444;
         --blue-world: #1A6EFF;
         --green-world: #22C55E;
         --yellow-world: #F59E0B;
-      }
-
-      @keyframes gradientDrift {
-        0%, 100% { background-position: 0% 50%; }
-        25% { background-position: 100% 0%; }
-        50% { background-position: 100% 100%; }
-        75% { background-position: 0% 100%; }
       }
 
       @keyframes meshPulse {
@@ -82,59 +76,47 @@ export function GlobalStyles() {
         to { opacity: 1; transform: translateY(0); }
       }
 
-      .hero-mesh {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-        z-index: 0;
+      @keyframes gridMove {
+        0% { transform: perspective(1000px) rotateX(60deg) translateY(0); }
+        100% { transform: perspective(1000px) rotateX(60deg) translateY(50px); }
       }
 
-      .hero-mesh::before {
-        content: '';
+      .cinematic-grid {
+        position: absolute;
+        width: 200vw;
+        height: 200vh;
+        left: -50vw;
+        top: -50vh;
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        transform-origin: center top;
+        animation: gridMove 2s linear infinite;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .cinematic-fade {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, transparent 0%, var(--dark) 70%);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .hero-glow {
         position: absolute;
         width: 600px;
         height: 600px;
-        top: 10%;
-        left: 10%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(26,110,255,0.35) 0%, transparent 70%);
-        animation: meshPulse 20s ease-in-out infinite;
-      }
-
-      .hero-mesh::after {
-        content: '';
-        position: absolute;
-        width: 500px;
-        height: 500px;
-        top: 40%;
-        right: 10%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(0,194,168,0.3) 0%, transparent 70%);
-        animation: meshPulse2 18s ease-in-out infinite;
-      }
-
-      .hero-mesh-extra {
-        position: absolute;
-        width: 450px;
-        height: 450px;
-        bottom: 10%;
-        left: 35%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,107,53,0.2) 0%, transparent 70%);
-        animation: meshPulse3 22s ease-in-out infinite;
         z-index: 0;
-      }
-
-      .hero-mesh-extra2 {
-        position: absolute;
-        width: 350px;
-        height: 350px;
-        top: 20%;
-        right: 30%;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(26,110,255,0.15) 0%, transparent 70%);
-        animation: meshPulse 25s ease-in-out infinite reverse;
-        z-index: 0;
+        pointer-events: none;
+        filter: blur(40px);
       }
 
       .card-hover {
@@ -196,10 +178,7 @@ export function GlobalStyles() {
       }
 
       @media (max-width: 768px) {
-        .hero-mesh::before { width: 300px; height: 300px; }
-        .hero-mesh::after { width: 250px; height: 250px; }
-        .hero-mesh-extra { width: 200px; height: 200px; }
-        .hero-mesh-extra2 { width: 180px; height: 180px; }
+        .cinematic-grid { background-size: 30px 30px; }
       }
     `}</style>
   )

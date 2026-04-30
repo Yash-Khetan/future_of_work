@@ -5,6 +5,7 @@ import WorldSelect from './screens/WorldSelect.jsx'
 import Setup from './screens/Setup.jsx'
 import Scenario from './screens/Scenario.jsx'
 import Results from './screens/Results.jsx'
+import { audio } from './utils/audio.js'
 
 export default function App() {
   const [screen, setScreen] = useState('landing')
@@ -14,6 +15,8 @@ export default function App() {
   const [finalMetrics, setFinalMetrics] = useState(null)
 
   const navigate = (s) => {
+    if (s === 'worldselect') audio.init() // initialize audio on first user interaction
+    if (s !== 'landing') audio.playClick()
     window.scrollTo({ top: 0, behavior: 'smooth' })
     setTimeout(() => setScreen(s), 100)
   }

@@ -15,7 +15,7 @@ export const WORLDS = [
     tagline: 'Corporate is King',
     color: '#1A6EFF',
     icon: '🏢',
-    available: false,
+    available: true,
     description: 'Big firms dominate. AI augments elite workers. A corporate career separates the haves from the have-nots.',
     indiaLens: 'Infosys · TCS · HDFC · Big 4 consulting',
   },

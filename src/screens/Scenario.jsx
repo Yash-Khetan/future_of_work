@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { SCENARIOS, INITIAL_METRICS } from '../data/redWorldScenarios.js';
+import { getWorldData } from '../data/worlds/index.js';
 import MetricDashboard from '../components/MetricDashboard.jsx';
 import DecisionCard from '../components/DecisionCard.jsx';
 import AanyaChat from '../components/AanyaChat.jsx';
 import ProgressBar from '../components/ProgressBar.jsx';
+import { audio } from '../utils/audio.js';
 
 const ROLE_LABELS = {
   strategy: 'Strategy Lead',
@@ -21,14 +22,32 @@ const INDUSTRY_LABELS = {
 
 export default function Scenario({ world, industry, role, onBack, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [metrics, setMetrics] = useState(INITIAL_METRICS);
+  const [metrics, setMetrics] = useState({});
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [showAanya, setShowAanya] = useState(false);
+  const [shake, setShake] = useState(false);
+  
+  const { scenarios, initialMetrics } = getWorldData(world?.id);
+  const scenario = scenarios[currentIndex];
 
-  const scenario = SCENARIOS[currentIndex];
+  useEffect(() => {
+    // Initialize metrics on mount
+    setMetrics(initialMetrics);
+    audio.init();
+  }, [initialMetrics]);
 
   const handleSelect = (choice) => {
     setSelectedChoice(choice);
+    
+    // Check if it's a "bad" decision to trigger alert audio + shake
+    if (choice.impact.workforceHealth < -15 || choice.impact.talentRetention < -15) {
+      audio.playAlert();
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    } else {
+      audio.playSelect();
+    }
+
     // Apply impact immediately
     setMetrics(prev => ({
       workforceHealth: prev.workforceHealth + choice.impact.workforceHealth,
@@ -44,7 +63,8 @@ export default function Scenario({ world, industry, role, onBack, onComplete }) 
   };
 
   const handleNext = () => {
-    if (currentIndex < SCENARIOS.length - 1) {
+    audio.playClick();
+    if (currentIndex < scenarios.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setSelectedChoice(null);
       setShowAanya(false);
@@ -54,12 +74,29 @@ export default function Scenario({ world, industry, role, onBack, onComplete }) 
     }
   };
 
+  if (!metrics.workforceHealth) return null; // Wait for init
+
   return (
     <div style={{
       minHeight: '100vh',
       background: '#0D1B2A',
       padding: '0 0 80px',
+      transform: shake ? 'translateX(5px)' : 'none',
+      transition: shake ? 'none' : 'transform 0.1s ease',
     }}>
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-10px); }
+          40% { transform: translateX(10px); }
+          60% { transform: translateX(-10px); }
+          80% { transform: translateX(10px); }
+        }
+        .shake-active {
+          animation: shake 0.4s ease-in-out;
+        }
+      `}</style>
+      
       {/* Header bar */}
       <div style={{
         padding: '16px 40px',
@@ -107,7 +144,7 @@ export default function Scenario({ world, industry, role, onBack, onComplete }) 
       <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 40px' }}>
         
         {/* Progress & Metrics */}
-        <ProgressBar current={currentIndex + 1} total={SCENARIOS.length} />
+        <ProgressBar current={currentIndex + 1} total={scenarios.length} />
         <MetricDashboard metrics={metrics} />
 
         {/* Scenario Content */}
