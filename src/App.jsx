@@ -4,12 +4,14 @@ import Landing from './screens/Landing.jsx'
 import WorldSelect from './screens/WorldSelect.jsx'
 import Setup from './screens/Setup.jsx'
 import Scenario from './screens/Scenario.jsx'
+import Results from './screens/Results.jsx'
 
 export default function App() {
   const [screen, setScreen] = useState('landing')
   const [selectedWorld, setSelectedWorld] = useState(null)
   const [selectedIndustry, setSelectedIndustry] = useState(null)
   const [selectedRole, setSelectedRole] = useState(null)
+  const [finalMetrics, setFinalMetrics] = useState(null)
 
   const navigate = (s) => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -45,6 +47,17 @@ export default function App() {
           industry={selectedIndustry}
           role={selectedRole}
           onBack={() => navigate('setup')}
+          onComplete={(metrics) => {
+            setFinalMetrics(metrics)
+            navigate('results')
+          }}
+        />
+      )}
+      {screen === 'results' && (
+        <Results
+          world={selectedWorld}
+          metrics={finalMetrics}
+          onRestart={() => navigate('worldselect')}
         />
       )}
     </>
