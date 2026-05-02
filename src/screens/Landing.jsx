@@ -435,23 +435,31 @@ const TerminalChat = () => {
 
 // --- MAIN LANDING COMPONENT ---
 export default function Landing({ onEnter }) {
-  // Hero section scroll logic (300vh tall)
+  // Hero section — scroll-driven phase switcher (vanilla scroll listener, no Framer Motion)
   const heroRef = useRef(null);
-  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end end"] });
+  const [heroPhase, setHeroPhase] = useState(1);
 
-  const heroLine1Blur = useTransform(heroProgress, [0, 0.2], [0, 20]);
-  const heroLine1Opacity = useTransform(heroProgress, [0, 0.2], [1, 0]);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const sectionHeight = heroRef.current.offsetHeight;
+      const scrolled = -rect.top; // how far we've scrolled into this section
+      const progress = Math.max(0, Math.min(1, scrolled / (sectionHeight - window.innerHeight)));
 
-  const heroLine2Blur = useTransform(heroProgress, [0.1, 0.3], [0, 20]);
-  const heroLine2Opacity = useTransform(heroProgress, [0.1, 0.3], [1, 0]);
+      if (progress < 0.3) {
+        setHeroPhase(1);
+      } else if (progress < 0.65) {
+        setHeroPhase(2);
+      } else {
+        setHeroPhase(3);
+      }
+    };
 
-  const heroLine3Blur = useTransform(heroProgress, [0.2, 0.5], [20, 0]);
-  const heroLine3Opacity = useTransform(heroProgress, [0.2, 0.5], [0, 1]);
-  const heroLine3Scale = useTransform(heroProgress, [0.2, 0.4, 0.5], [0.9, 1.1, 1]);
-
-  const heroLine4Y = useTransform(heroProgress, [0.6, 0.8], [60, 0]);
-  const heroLine4Opacity = useTransform(heroProgress, [0.6, 0.8], [0, 1]);
-  const heroLine4PathOffset = useTransform(heroProgress, [0.6, 0.8], [1, 0]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // run once on mount
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Section 2 Progress (300vh tall)
   const s2Ref = useRef(null);
@@ -464,9 +472,8 @@ export default function Landing({ onEnter }) {
   useEffect(() => {
     return s2Progress.on('change', (v) => {
       if (v > 0.3) {
-        // Scramble to target
         const diff = 170000000 - 92000000;
-        const progress = Math.min((v - 0.3) * 2.5, 1); // 0 to 1 rapidly
+        const progress = Math.min((v - 0.3) * 2.5, 1);
         setNumValue(Math.floor(92000000 + diff * progress));
         if (progress > 0.8) {
           setNumText('ROLES CREATED');
@@ -489,6 +496,23 @@ export default function Landing({ onEnter }) {
   const s3Ref = useRef(null);
   const { scrollYProgress: s3Progress } = useScroll({ target: s3Ref, offset: ["start start", "end end"] });
 
+  // Shared style for hero text phases
+  const heroTextStyle = (isActive) => ({
+    position: 'absolute',
+    zIndex: isActive ? 2 : 1,
+    textAlign: 'center',
+    width: '100%',
+    padding: '0 20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: isActive ? 1 : 0,
+    transform: isActive ? 'translateY(0)' : 'translateY(30px)',
+    transition: 'opacity 0.6s ease, transform 0.6s ease',
+    pointerEvents: isActive ? 'auto' : 'none',
+  });
+
   return (
     <>
       <GlobalTypography />
@@ -499,58 +523,54 @@ export default function Landing({ onEnter }) {
         <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <ParticleField />
 
-          <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', width: '100%', padding: '0 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <motion.div style={{ filter: `blur(${heroLine1Blur}px)`, opacity: heroLine1Opacity }} className="font-display">
-              <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: 0, letterSpacing: '-5px' }}>The future of work</h1>
-            </motion.div>
+          {/* Phase 1: "The future of work isn't approaching." */}
+          <div style={heroTextStyle(heroPhase === 1)} className="font-display">
+            <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: 0, letterSpacing: '-5px' }}>The future of work</h1>
+            <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: 0, letterSpacing: '-5px', color: 'rgba(255,255,255,0.4)' }}>isn't approaching.</h1>
+          </div>
 
-            <motion.div style={{ filter: `blur(${heroLine2Blur}px)`, opacity: heroLine2Opacity }} className="font-display">
-              <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: 0, letterSpacing: '-5px', color: 'rgba(255,255,255,0.4)' }}>isn't approaching.</h1>
-            </motion.div>
+          {/* Phase 2: "It's already executing." */}
+          <div style={heroTextStyle(heroPhase === 2)} className="font-display">
+            <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: '0', letterSpacing: '-5px', color: '#00FFD1' }}>It's already executing.</h1>
+          </div>
 
-            <div className="hero-bottom-lines">
-              <motion.div style={{ filter: `blur(${heroLine3Blur}px)`, opacity: heroLine3Opacity, scale: heroLine3Scale }} className="font-display">
-                <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', margin: '0', letterSpacing: '-5px', color: '#00FFD1' }}>It's already executing.</h1>
-              </motion.div>
+          {/* Phase 3: "It's already here." */}
+          <div style={heroTextStyle(heroPhase === 3)} className="font-display">
+            <h1 style={{ fontSize: 'clamp(48px, 9vw, 110px)', margin: '0', letterSpacing: '-5px', color: '#fff' }}>
+              It's already{' '}
+              <span style={{ position: 'relative', display: 'inline-block' }}>
+                here.
+                <svg
+                  viewBox="0 0 100 20"
+                  style={{ position: 'absolute', left: -5, right: -10, bottom: -2, width: 'calc(100% + 15px)', height: '20px', overflow: 'visible', zIndex: -1 }}
+                >
+                  <path
+                    d="M 5 10 Q 30 18 60 12 T 95 8"
+                    fill="none"
+                    stroke="#00FFD1"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    style={{
+                      strokeDasharray: 100,
+                      strokeDashoffset: heroPhase === 3 ? 0 : 100,
+                      transition: 'stroke-dashoffset 0.8s ease 0.3s',
+                    }}
+                  />
+                </svg>
+              </span>
+            </h1>
+          </div>
 
-              <motion.div className="hero-slash" style={{ opacity: heroLine3Opacity }}>/</motion.div>
-
-              <motion.div style={{ y: heroLine4Y, opacity: heroLine4Opacity }} className="font-display">
-                <h1 style={{ fontSize: 'clamp(48px, 9vw, 110px)', margin: '0', letterSpacing: '-5px', color: '#fff' }}>
-                  It's already{' '}
-                  <span style={{ position: 'relative', display: 'inline-block' }}>
-                    here.
-                    <svg
-                      viewBox="0 0 100 20"
-                      style={{ position: 'absolute', left: -5, right: -10, bottom: -2, width: 'calc(100% + 15px)', height: '20px', overflow: 'visible', zIndex: -1 }}
-                    >
-                      <motion.path
-                        d="M 5 10 Q 30 18 60 12 T 95 8"
-                        fill="none"
-                        stroke="#00FFD1"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        style={{
-                          pathLength: 1,
-                          pathOffset: heroLine4PathOffset
-                        }}
-                      />
-                    </svg>
-                  </span>
-                </h1>
-              </motion.div>
-            </div>
-
-            <div style={{ position: 'absolute', bottom: '-40vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }}>
-              <RadarButton onClick={onEnter} />
-              <a
-                href="#research"
-                className="font-mono"
-                style={{ color: '#fff', textDecoration: 'none', fontSize: 12, letterSpacing: 4, opacity: 0.6 }}
-              >
-                [ ACCESS DATA ]
-              </a>
-            </div>
+          {/* CTA Button */}
+          <div style={{ position: 'absolute', bottom: '10vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, zIndex: 3 }}>
+            <RadarButton onClick={onEnter} />
+            <a
+              href="#research"
+              className="font-mono"
+              style={{ color: '#fff', textDecoration: 'none', fontSize: 12, letterSpacing: 4, opacity: 0.6 }}
+            >
+              [ ACCESS DATA ]
+            </a>
           </div>
         </div>
       </section>
