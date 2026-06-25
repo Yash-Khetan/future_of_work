@@ -11,7 +11,6 @@ export default function Navbar() {
 
   return (
     <nav
-      className={scrolled ? 'navbar-scrolled' : ''}
       style={{
         position: 'fixed',
         top: 0,
@@ -22,21 +21,40 @@ export default function Navbar() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '16px 40px',
-        background: scrolled ? 'rgba(13,27,42,0.85)' : 'transparent',
+        background: scrolled ? 'rgba(0,0,0,0.85)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
         transition: 'all 0.3s ease',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <span style={{ fontWeight: 800, fontSize: 22, color: '#fff', letterSpacing: '-0.5px' }}>
-          WorkWorld
+      <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        <span style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 900,
+          fontSize: 20,
+          color: '#fff',
+          letterSpacing: '-0.5px',
+        }}>
+          AI & Future
         </span>
-        <span style={{ fontWeight: 800, fontSize: 22, color: '#1A6EFF', letterSpacing: '-0.5px' }}>
-          2030
+        <span style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 900,
+          fontSize: 20,
+          color: '#00FFD1',
+          letterSpacing: '-0.5px',
+        }}>
+          of Work
         </span>
       </div>
-      <span style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>
-        SP Jain × Future of Work
+      <span style={{
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 11,
+        color: 'rgba(255,255,255,0.4)',
+        letterSpacing: 2,
+      }}>
+        SP JAIN · MBA
       </span>
     </nav>
   )
