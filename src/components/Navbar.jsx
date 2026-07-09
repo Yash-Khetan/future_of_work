@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react'
+import { audio } from '../utils/audio.js'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [soundOn, setSoundOn] = useState(true)
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
+
+  const handleToggleSound = () => {
+    const isNowEnabled = audio.toggle()
+    setSoundOn(isNowEnabled)
+    if (isNowEnabled) {
+      audio.playClick()
+    }
+  }
 
   return (
     <nav
@@ -48,14 +58,35 @@ export default function Navbar() {
           of Work
         </span>
       </div>
-      <span style={{
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: 11,
-        color: 'rgba(255,255,255,0.4)',
-        letterSpacing: 2,
-      }}>
-        SP JAIN · MBA
-      </span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <button
+          onClick={handleToggleSound}
+          title={soundOn ? 'Mute sounds' : 'Unmute sounds'}
+          style={{
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 8,
+            padding: '6px 8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: soundOn ? '#00FFD1' : 'rgba(255,255,255,0.3)',
+            transition: 'all 0.2s ease',
+            fontSize: 16,
+          }}
+        >
+          {soundOn ? '🔊' : '🔇'}
+        </button>
+        <span style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.4)',
+          letterSpacing: 2,
+        }}>
+          SP JAIN · MBA
+        </span>
+      </div>
     </nav>
   )
 }

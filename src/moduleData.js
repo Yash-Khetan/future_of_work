@@ -15,9 +15,24 @@ export const MODULES = [
     activity: { type: 'group', label: 'Group Activity' },
     readings: [
       {
+        title: 'Why Companies That Choose AI Augmentation Over Automation May Win in the Long Run',
+        type: 'suggested',
+        url: 'https://hbr.org/2026/04/why-companies-that-choose-ai-augmentation-over-automation-may-win-in-the-long-run',
+      },
+      {
+        title: "Companies Are Laying Off Workers Because of AI's Potential, Not Its Performance",
+        type: 'suggested',
+        url: 'https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance',
+      },
+      {
         title: 'Workforce of the Future — The competing forces shaping 2030',
         type: 'suggested',
-        url: null,
+        url: 'https://www.pwc.com/gx/en/services/people-organisation/workforce-of-the-future/workforce-of-the-future-the-competing-forces-shaping-2030-pwc.pdf',
+      },
+      {
+        title: 'The Future of Jobs Report 2020',
+        type: 'suggested',
+        url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2020/',
       },
     ],
   },
@@ -66,6 +81,26 @@ export const MODULES = [
         type: 'compulsory',
         url: null,
       },
+      {
+        title: 'How Infosys Uses AI to Upskill a Workforce of 300,000',
+        type: 'suggested',
+        url: 'https://www.hrkatha.com/features/how-infosys-uses-ai-to-upskill-a-workforce-of-300000/',
+      },
+      {
+        title: 'Jobs Lost, Jobs Gained: What the Future of Work Will Mean for Jobs, Skills, and Wages',
+        type: 'suggested',
+        url: 'https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages',
+      },
+      {
+        title: '5 Critical Skills Leaders Need in the Age of AI',
+        type: 'suggested',
+        url: 'https://hbr.org/2025/10/5-critical-skills-leaders-need-in-the-age-of-ai',
+      },
+      {
+        title: 'The State of AI 2024',
+        type: 'suggested',
+        url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024',
+      },
     ],
   },
   {
@@ -87,6 +122,36 @@ export const MODULES = [
         title: '5 Critical Skills Leaders Need in the Age of AI — Herminia Ibarra',
         type: 'compulsory',
         url: null,
+      },
+      {
+        title: 'Leading with AI',
+        type: 'suggested',
+        url: 'https://mitsloan.mit.edu/sites/default/files/2024-10/leading_with_ai.pdf',
+      },
+      {
+        title: 'Why AI Demands a New Breed of Leaders',
+        type: 'suggested',
+        url: 'https://sloanreview.mit.edu/article/why-ai-demands-a-new-breed-of-leaders/',
+      },
+      {
+        title: 'Learning to Lead in the Digital Age: The AI Readiness Reflection',
+        type: 'suggested',
+        url: 'https://www.harvardbusiness.org/insight/learning-to-lead-in-the-digital-age-the-ai-readiness-reflection/',
+      },
+      {
+        title: 'Beyond STEM: Making Leadership Irreplaceably Human',
+        type: 'suggested',
+        url: 'https://www.aacsb.edu/insights/articles/2025/11/beyond-stem-making-leadership-irreplaceably-human',
+      },
+      {
+        title: 'Stanford Sierra Camp — HAI Education',
+        type: 'suggested',
+        url: 'https://hai.stanford.edu/education/stanford-sierra-camp',
+      },
+      {
+        title: 'Why Soft Skills Still Matter in the Age of AI',
+        type: 'suggested',
+        url: 'https://www.library.hbs.edu/working-knowledge/why-soft-skills-still-matter-in-the-age-of-ai',
       },
     ],
   },
@@ -111,6 +176,41 @@ export const MODULES = [
         type: 'compulsory',
         url: null,
       },
+      {
+        title: '6 Predictions for the Future of Performance Management',
+        type: 'suggested',
+        url: 'https://www.gartner.com/en/articles/6-predictions-for-the-future-of-performance-management',
+      },
+      {
+        title: 'People Analytics',
+        type: 'suggested',
+        url: 'https://www.mckinsey.com/solutions/orgsolutions/overview/people-analytics',
+      },
+      {
+        title: "Amazon's System for Tracking Its Warehouse Workers Can Automatically Fire Them",
+        type: 'suggested',
+        url: 'https://www.technologyreview.com/2019/04/26/1021/amazons-system-for-tracking-its-warehouse-workers-can-automatically-fire-them/',
+      },
+      {
+        title: "'Stack Ranking' Ends at Microsoft, Generating Heated Debate",
+        type: 'suggested',
+        url: 'https://www.shrm.org/topics-tools/news/benefits-compensation/stack-ranking-ends-microsoft-generating-heated-debate',
+      },
+      {
+        title: 'IBM AI Can Predict With 95% Accuracy Which Employees Will Quit',
+        type: 'suggested',
+        url: 'https://www.cnbc.com/2019/04/03/ibm-ai-can-predict-with-95-percent-accuracy-which-employees-will-quit.html',
+      },
+      {
+        title: 'EU Artificial Intelligence Act — Regulatory Framework',
+        type: 'suggested',
+        url: 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai',
+      },
+      {
+        title: 'SHRM Position on AI Workplace Standards',
+        type: 'suggested',
+        url: 'https://www.shrm.org/about/press-room/shrm-position-on-the-trump-administration-s-ai-executive-order',
+      },
     ],
   },
   {
@@ -133,6 +233,36 @@ export const MODULES = [
         title: 'AI, Algorithm and Compensation Strategy: Challenges and Opportunities',
         type: 'suggested',
         url: 'https://www.sciencedirect.com/science/article/pii/S0090261624000123',
+      },
+      {
+        title: 'Expansion of the Gig and Platform Economy in India',
+        type: 'suggested',
+        url: 'https://www.ilo.org/publications/expansion-gig-and-platform-economy-india-opportunities-employer-and',
+      },
+      {
+        title: 'Artificial Intelligence, Algorithms, and Compensation Strategy: Challenges and Opportunities (2024)',
+        type: 'suggested',
+        url: 'https://www.sciencedirect.com/science/article/abs/pii/S0090261624000123',
+      },
+      {
+        title: 'Not Even Nice Work If You Can Get It: A Longitudinal Study of Uber\'s Algorithmic Pay and Pricing',
+        type: 'suggested',
+        url: 'https://arxiv.org/html/2506.15278v1',
+      },
+      {
+        title: 'How Uber & Lyft Surge Pricing Works in 2026',
+        type: 'suggested',
+        url: 'https://getridewise.com/blog/uber-lyft-surge-algorithm-explained-2026',
+      },
+      {
+        title: 'Ensuring Social Safety Net for the Gig Worker',
+        type: 'suggested',
+        url: 'https://www.nextias.com/ca/editorial-analysis/16-10-2024/ensuring-social-safety-net-for-the-gig-worker',
+      },
+      {
+        title: 'Building Pro-Worker Artificial Intelligence',
+        type: 'suggested',
+        url: 'https://www.nber.org/papers/w34854',
       },
     ],
   },
@@ -185,6 +315,21 @@ export const MODULES = [
         type: 'suggested',
         url: 'http://www.nber.org/papers/w34854',
       },
+      {
+        title: 'India Human Rights Body Calls for Scrutiny of Amazon Warehouse Labour Practices',
+        type: 'suggested',
+        url: 'https://www.theglobeandmail.com/business/international-business/article-indias-human-rights-commission-calls-for-scrutiny-of-amazon-warehouse/',
+      },
+      {
+        title: 'Worker Power and Voice in the AI Response',
+        type: 'suggested',
+        url: 'https://clje.law.harvard.edu/worker-power-and-voice-in-the-ai-response/',
+      },
+      {
+        title: 'Regulating AI in the Workplace',
+        type: 'suggested',
+        url: 'https://clje.law.harvard.edu/publication/building-worker-power-in-cities-states/regulating-ai-in-the-workplace/',
+      },
     ],
   },
   {
@@ -207,6 +352,26 @@ export const MODULES = [
         title: 'And the Award Goes to… Gen AI',
         type: 'compulsory',
         url: null,
+      },
+      {
+        title: 'Artificial Intelligence for the Real World — Davenport & Ronanki (2018)',
+        type: 'suggested',
+        url: 'https://hbr.org/2018/01/artificial-intelligence-for-the-real-world',
+      },
+      {
+        title: 'Roles of AI in Collaboration with Humans: Automation, Augmentation, and the Future of Work — Fügener, Walzner & Gupta (2025)',
+        type: 'suggested',
+        url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.2024.05684',
+      },
+      {
+        title: 'Artificial Intelligence and Management: The Automation–Augmentation Paradox — Raisch & Krakowski (2021)',
+        type: 'suggested',
+        url: 'https://doi.org/10.5465/amr.2018.0072',
+      },
+      {
+        title: 'Picking on the Same Person: Does Algorithmic Monoculture Lead to Outcome Homogenization? — Bommasani et al. (2022)',
+        type: 'suggested',
+        url: 'https://arxiv.org/abs/2211.13972',
       },
     ],
   },

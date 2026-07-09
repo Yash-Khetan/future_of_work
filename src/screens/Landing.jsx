@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.jsx';
 import Timeline from '../components/Timeline.jsx';
 import { MODULES, COURSE_STATS } from '../moduleData.js';
 import { STATS } from '../data.js';
+import { audio } from '../utils/audio.js';
 
 // --- STYLES & FONTS ---
 const GlobalTypography = () => (
@@ -308,6 +309,12 @@ export default function Landing() {
   const heroRef = useRef(null);
   const timelineRef = useRef(null);
   const [heroPhase, setHeroPhase] = useState(1);
+  const prevPhaseRef = useRef(1);
+
+  // Start ambient music as soon as possible
+  useEffect(() => {
+    audio.autoStart();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -317,13 +324,20 @@ export default function Landing() {
       const scrolled = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / (sectionHeight - window.innerHeight)));
 
+      let newPhase;
       if (progress < 0.3) {
-        setHeroPhase(1);
+        newPhase = 1;
       } else if (progress < 0.65) {
-        setHeroPhase(2);
+        newPhase = 2;
       } else {
-        setHeroPhase(3);
+        newPhase = 3;
       }
+
+      if (newPhase !== prevPhaseRef.current) {
+        prevPhaseRef.current = newPhase;
+        audio.playTransition();
+      }
+      setHeroPhase(newPhase);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
