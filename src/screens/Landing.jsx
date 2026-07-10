@@ -387,7 +387,7 @@ export default function Landing() {
               fontSize: 11, letterSpacing: 6, color: '#00FFD1', marginBottom: 24,
               opacity: 0.8,
             }}>
-              SP JAIN INSTITUTE OF MANAGEMENT & RESEARCH (SPJIMIR)
+              SP JAIN INSTITUTE OF MANAGEMENT & RESEARCH (SPJIMR)
             </div>
             <h1 style={{
               fontSize: 'clamp(48px, 9vw, 110px)', margin: 0, letterSpacing: '-5px',
