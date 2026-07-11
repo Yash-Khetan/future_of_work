@@ -378,10 +378,12 @@ export default function Landing() {
           {/* Phase 1 */}
           <div style={heroTextStyle(heroPhase === 1)} className="font-display">
             <div className="font-mono" style={{
-              fontSize: 11, letterSpacing: 6, color: '#00FFD1', marginBottom: 24,
+              fontSize: 15, letterSpacing: 6, color: '#00FFD1', marginBottom: 24,
               opacity: 0.8,
             }}>
+              Leadership Journey
             </div>
+
             <h1 style={{
               fontSize: 'clamp(48px, 9vw, 110px)', margin: 0, letterSpacing: '-5px',
               lineHeight: 0.95,
