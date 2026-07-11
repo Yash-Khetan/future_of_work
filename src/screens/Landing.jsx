@@ -4,7 +4,6 @@ import Navbar from '../components/Navbar.jsx';
 import Timeline from '../components/Timeline.jsx';
 import { MODULES, COURSE_STATS } from '../moduleData.js';
 import { STATS } from '../data.js';
-import { audio } from '../utils/audio.js';
 
 // --- STYLES & FONTS ---
 const GlobalTypography = () => (
@@ -311,10 +310,6 @@ export default function Landing() {
   const [heroPhase, setHeroPhase] = useState(1);
   const prevPhaseRef = useRef(1);
 
-  // Start ambient music as soon as possible
-  useEffect(() => {
-    audio.autoStart();
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -335,7 +330,6 @@ export default function Landing() {
 
       if (newPhase !== prevPhaseRef.current) {
         prevPhaseRef.current = newPhase;
-        audio.playTransition();
       }
       setHeroPhase(newPhase);
     };
@@ -387,7 +381,6 @@ export default function Landing() {
               fontSize: 11, letterSpacing: 6, color: '#00FFD1', marginBottom: 24,
               opacity: 0.8,
             }}>
-              SP JAIN INSTITUTE OF MANAGEMENT & RESEARCH (SPJIMR)
             </div>
             <h1 style={{
               fontSize: 'clamp(48px, 9vw, 110px)', margin: 0, letterSpacing: '-5px',
@@ -439,7 +432,7 @@ export default function Landing() {
               fontSize: 12, letterSpacing: 4, color: 'rgba(255,255,255,0.4)',
               marginTop: 32,
             }}>
-              AI AND THE FUTURE OF WORK & ORGANIZATION
+
             </div>
           </div>
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, BookOpen, Calendar, Clock, Zap } from 'lucide-react';
-import { audio } from '../utils/audio.js';
 
 const activityIcons = {
   group: '👥',
@@ -23,11 +22,6 @@ export default function ModuleCard({ module, index }) {
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
       onClick={() => {
-        if (isExpanded) {
-          audio.playCollapse();
-        } else {
-          audio.playSelect();
-        }
         setIsExpanded(!isExpanded);
       }}
       style={{ cursor: 'pointer', width: '100%' }}
