@@ -25,11 +25,6 @@ export const MODULES = [
         url: 'https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance',
       },
       {
-        title: 'Workforce of the Future — The competing forces shaping 2030',
-        type: 'suggested',
-        url: 'https://www.pwc.com/gx/en/services/people-organisation/workforce-of-the-future/workforce-of-the-future-the-competing-forces-shaping-2030-pwc.pdf',
-      },
-      {
         title: 'The Future of Jobs Report 2020',
         type: 'suggested',
         url: 'https://www.weforum.org/publications/the-future-of-jobs-report-2020/',
@@ -58,6 +53,20 @@ export const MODULES = [
         type: 'compulsory',
         url: null,
       },
+      {
+        title: 'Designing the Intelligent Organization: Six Principles for Human-AI Collaboration',
+        type: 'suggested',
+        url: 'https://journals.sagepub.com/doi/10.1177/00081256231211020',
+        description:
+          'A research paper introducing six principles for designing organizations where humans and AI collaborate effectively.',
+      },
+      {
+        title: '2026 Global Human Capital Trends: From Tensions to Tipping Points – Choosing the Human Advantage',
+        type: 'suggested',
+        url: 'https://www.deloitte.com/us/en/insights/topics/talent/human-capital-trends.html',
+        description:
+          "Deloitte's flagship report on how AI is reshaping work, workforce strategy, leadership, and organizational design.",
+      },
     ],
   },
   {
@@ -82,11 +91,6 @@ export const MODULES = [
         url: null,
       },
       {
-        title: 'How Infosys Uses AI to Upskill a Workforce of 300,000',
-        type: 'suggested',
-        url: 'https://www.hrkatha.com/features/how-infosys-uses-ai-to-upskill-a-workforce-of-300000/',
-      },
-      {
         title: 'Jobs Lost, Jobs Gained: What the Future of Work Will Mean for Jobs, Skills, and Wages',
         type: 'suggested',
         url: 'https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages',
@@ -95,11 +99,6 @@ export const MODULES = [
         title: '5 Critical Skills Leaders Need in the Age of AI',
         type: 'suggested',
         url: 'https://hbr.org/2025/10/5-critical-skills-leaders-need-in-the-age-of-ai',
-      },
-      {
-        title: 'The State of AI 2024',
-        type: 'suggested',
-        url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024',
       },
     ],
   },
@@ -127,26 +126,6 @@ export const MODULES = [
         title: 'Leading with AI',
         type: 'suggested',
         url: 'https://mitsloan.mit.edu/sites/default/files/2024-10/leading_with_ai.pdf',
-      },
-      {
-        title: 'Why AI Demands a New Breed of Leaders',
-        type: 'suggested',
-        url: 'https://sloanreview.mit.edu/article/why-ai-demands-a-new-breed-of-leaders/',
-      },
-      {
-        title: 'Learning to Lead in the Digital Age: The AI Readiness Reflection',
-        type: 'suggested',
-        url: 'https://www.harvardbusiness.org/insight/learning-to-lead-in-the-digital-age-the-ai-readiness-reflection/',
-      },
-      {
-        title: 'Beyond STEM: Making Leadership Irreplaceably Human',
-        type: 'suggested',
-        url: 'https://www.aacsb.edu/insights/articles/2025/11/beyond-stem-making-leadership-irreplaceably-human',
-      },
-      {
-        title: 'Stanford Sierra Camp — HAI Education',
-        type: 'suggested',
-        url: 'https://hai.stanford.edu/education/stanford-sierra-camp',
       },
       {
         title: 'Why Soft Skills Still Matter in the Age of AI',
@@ -182,34 +161,9 @@ export const MODULES = [
         url: 'https://www.gartner.com/en/articles/6-predictions-for-the-future-of-performance-management',
       },
       {
-        title: 'People Analytics',
-        type: 'suggested',
-        url: 'https://www.mckinsey.com/solutions/orgsolutions/overview/people-analytics',
-      },
-      {
         title: "Amazon's System for Tracking Its Warehouse Workers Can Automatically Fire Them",
         type: 'suggested',
         url: 'https://www.technologyreview.com/2019/04/26/1021/amazons-system-for-tracking-its-warehouse-workers-can-automatically-fire-them/',
-      },
-      {
-        title: "'Stack Ranking' Ends at Microsoft, Generating Heated Debate",
-        type: 'suggested',
-        url: 'https://www.shrm.org/topics-tools/news/benefits-compensation/stack-ranking-ends-microsoft-generating-heated-debate',
-      },
-      {
-        title: 'IBM AI Can Predict With 95% Accuracy Which Employees Will Quit',
-        type: 'suggested',
-        url: 'https://www.cnbc.com/2019/04/03/ibm-ai-can-predict-with-95-percent-accuracy-which-employees-will-quit.html',
-      },
-      {
-        title: 'EU Artificial Intelligence Act — Regulatory Framework',
-        type: 'suggested',
-        url: 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai',
-      },
-      {
-        title: 'SHRM Position on AI Workplace Standards',
-        type: 'suggested',
-        url: 'https://www.shrm.org/about/press-room/shrm-position-on-the-trump-administration-s-ai-executive-order',
       },
     ],
   },
@@ -238,26 +192,6 @@ export const MODULES = [
         title: 'Expansion of the Gig and Platform Economy in India',
         type: 'suggested',
         url: 'https://www.ilo.org/publications/expansion-gig-and-platform-economy-india-opportunities-employer-and',
-      },
-      {
-        title: 'Artificial Intelligence, Algorithms, and Compensation Strategy: Challenges and Opportunities (2024)',
-        type: 'suggested',
-        url: 'https://www.sciencedirect.com/science/article/abs/pii/S0090261624000123',
-      },
-      {
-        title: 'Not Even Nice Work If You Can Get It: A Longitudinal Study of Uber\'s Algorithmic Pay and Pricing',
-        type: 'suggested',
-        url: 'https://arxiv.org/html/2506.15278v1',
-      },
-      {
-        title: 'How Uber & Lyft Surge Pricing Works in 2026',
-        type: 'suggested',
-        url: 'https://getridewise.com/blog/uber-lyft-surge-algorithm-explained-2026',
-      },
-      {
-        title: 'Ensuring Social Safety Net for the Gig Worker',
-        type: 'suggested',
-        url: 'https://www.nextias.com/ca/editorial-analysis/16-10-2024/ensuring-social-safety-net-for-the-gig-worker',
       },
       {
         title: 'Building Pro-Worker Artificial Intelligence',
@@ -311,16 +245,6 @@ export const MODULES = [
         url: null,
       },
       {
-        title: 'Building Pro-worker Artificial Intelligence',
-        type: 'suggested',
-        url: 'http://www.nber.org/papers/w34854',
-      },
-      {
-        title: 'India Human Rights Body Calls for Scrutiny of Amazon Warehouse Labour Practices',
-        type: 'suggested',
-        url: 'https://www.theglobeandmail.com/business/international-business/article-indias-human-rights-commission-calls-for-scrutiny-of-amazon-warehouse/',
-      },
-      {
         title: 'Worker Power and Voice in the AI Response',
         type: 'suggested',
         url: 'https://clje.law.harvard.edu/worker-power-and-voice-in-the-ai-response/',
@@ -359,19 +283,9 @@ export const MODULES = [
         url: 'https://hbr.org/2018/01/artificial-intelligence-for-the-real-world',
       },
       {
-        title: 'Roles of AI in Collaboration with Humans: Automation, Augmentation, and the Future of Work — Fügener, Walzner & Gupta (2025)',
-        type: 'suggested',
-        url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.2024.05684',
-      },
-      {
         title: 'Artificial Intelligence and Management: The Automation–Augmentation Paradox — Raisch & Krakowski (2021)',
         type: 'suggested',
         url: 'https://doi.org/10.5465/amr.2018.0072',
-      },
-      {
-        title: 'Picking on the Same Person: Does Algorithmic Monoculture Lead to Outcome Homogenization? — Bommasani et al. (2022)',
-        type: 'suggested',
-        url: 'https://arxiv.org/abs/2211.13972',
       },
     ],
   },
@@ -396,6 +310,20 @@ export const MODULES = [
         title: 'How to Move from AI Experimentation to AI Transformation — Arjun Dutt et al.',
         type: 'suggested',
         url: null,
+      },
+      {
+        title: 'Stanford Digital Economy Lab – Enterprise AI Playbook',
+        type: 'suggested',
+        url: 'https://digitaleconomy.stanford.edu/publication/enterprise-ai-playbook/',
+        description:
+          'A practical playbook based on real-world enterprise AI implementations, offering strategies for successful AI adoption.',
+      },
+      {
+        title: 'Wharton – 2025 AI Adoption Report',
+        type: 'suggested',
+        url: 'https://ai.wharton.upenn.edu/wp-content/uploads/2025/10/2025-Wharton-GBK-AI-Adoption-Report_Full-Report.pdf',
+        description:
+          'A comprehensive report on how organizations are adopting AI, including insights into ROI, governance, and workforce transformation.',
       },
     ],
   },

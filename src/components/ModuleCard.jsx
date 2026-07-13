@@ -345,6 +345,7 @@ export default function ModuleCard({ module, index }) {
                             textDecoration: 'none',
                             lineHeight: 1.5,
                             borderBottom: `1px dashed ${module.color}40`,
+                            display: 'inline-block',
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -360,6 +361,19 @@ export default function ModuleCard({ module, index }) {
                           }}
                         >
                           {reading.title}
+                        </div>
+                      )}
+                      {reading.description && (
+                        <div
+                          className="font-mono"
+                          style={{
+                            fontSize: 11,
+                            color: 'rgba(255,255,255,0.45)',
+                            lineHeight: 1.45,
+                            marginTop: 6,
+                          }}
+                        >
+                          {reading.description}
                         </div>
                       )}
                     </motion.div>
