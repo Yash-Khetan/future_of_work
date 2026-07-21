@@ -36,7 +36,7 @@ export default function Navbar() {
           color: '#fff',
           letterSpacing: '-0.5px',
         }}>
-          AI & Future
+          The Future
         </span>
         <span style={{
           fontFamily: "'Space Grotesk', sans-serif",

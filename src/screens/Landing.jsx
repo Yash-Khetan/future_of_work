@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import Navbar from '../components/Navbar.jsx';
 import Timeline from '../components/Timeline.jsx';
 import { MODULES, COURSE_STATS } from '../moduleData.js';
 import { STATS } from '../data.js';
@@ -106,7 +105,8 @@ const GlobalTypography = () => (
   `}</style>
 );
 
-// --- COMPONENT: Particle Field ---
+
+// --- COMPONENT: Particle Field (Galaxy Background) ---
 const ParticleField = () => {
   const canvasRef = useRef(null);
 
@@ -190,7 +190,7 @@ const ParticleField = () => {
     <canvas
       ref={canvasRef}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: 0, left: 0,
         width: '100%', height: '100%',
         zIndex: 0,
@@ -199,6 +199,7 @@ const ParticleField = () => {
     />
   );
 };
+
 
 // --- COMPONENT: Animated Counter ---
 const AnimatedCounter = ({ value, label, color, suffix = '' }) => {
@@ -305,165 +306,18 @@ const FloatingOrbs = () => (
 
 // --- MAIN LANDING COMPONENT ---
 export default function Landing() {
-  const heroRef = useRef(null);
   const timelineRef = useRef(null);
-  const [heroPhase, setHeroPhase] = useState(1);
-  const prevPhaseRef = useRef(1);
-
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const sectionHeight = heroRef.current.offsetHeight;
-      const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / (sectionHeight - window.innerHeight)));
-
-      let newPhase;
-      if (progress < 0.3) {
-        newPhase = 1;
-      } else if (progress < 0.65) {
-        newPhase = 2;
-      } else {
-        newPhase = 3;
-      }
-
-      if (newPhase !== prevPhaseRef.current) {
-        prevPhaseRef.current = newPhase;
-      }
-      setHeroPhase(newPhase);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Section 2 Progress (course stats)
   const s2Ref = useRef(null);
   const { scrollYProgress: s2Progress } = useScroll({ target: s2Ref, offset: ["start start", "end end"] });
   const s2LineScale = useTransform(s2Progress, [0.1, 0.5], [0, 1]);
 
-  const heroTextStyle = (isActive) => ({
-    position: 'absolute',
-    zIndex: isActive ? 2 : 1,
-    textAlign: 'center',
-    width: '100%',
-    padding: '0 20px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    opacity: isActive ? 1 : 0,
-    transform: isActive ? 'translateY(0)' : 'translateY(30px)',
-    transition: 'opacity 0.6s ease, transform 0.6s ease',
-    pointerEvents: isActive ? 'auto' : 'none',
-  });
-
   return (
     <>
       <GlobalTypography />
-      <Navbar />
+      <ParticleField />
 
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 1: HERO
-      ═══════════════════════════════════════════════════════════════ */}
-      <section ref={heroRef} style={{ height: '300vh', position: 'relative' }}>
-        <div style={{
-          position: 'sticky', top: 0, height: '100vh', overflow: 'hidden',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <ParticleField />
-
-          {/* Phase 1 */}
-          <div style={heroTextStyle(heroPhase === 1)} className="font-display">
-            <div className="font-mono" style={{
-              fontSize: 15, letterSpacing: 6, color: '#00FFD1', marginBottom: 24,
-              opacity: 0.8,
-            }}>
-              Leadership Journey
-            </div>
-
-            <h1 style={{
-              fontSize: 'clamp(48px, 9vw, 110px)', margin: 0, letterSpacing: '-5px',
-              lineHeight: 0.95,
-            }}>
-              The workplace
-            </h1>
-            <h1 style={{
-              fontSize: 'clamp(48px, 9vw, 110px)', margin: 0, letterSpacing: '-5px',
-              color: 'rgba(255,255,255,0.3)', lineHeight: 0.95,
-            }}>
-              is being rewritten.
-            </h1>
-          </div>
-
-          {/* Phase 2 */}
-          <div style={heroTextStyle(heroPhase === 2)} className="font-display">
-            <h1 style={{
-              fontSize: 'clamp(44px, 8vw, 100px)', margin: 0, letterSpacing: '-4px',
-              lineHeight: 1.05,
-            }}>
-              By algorithms.{' '}
-              <span style={{ color: '#1A6EFF' }}>By you.</span>
-              <br />
-              <span style={{ color: '#00FFD1' }}>By us.</span>
-            </h1>
-          </div>
-
-          {/* Phase 3 */}
-          <div style={heroTextStyle(heroPhase === 3)} className="font-display">
-            <h1 style={{
-              fontSize: 'clamp(40px, 7vw, 90px)', margin: 0, letterSpacing: '-4px',
-              lineHeight: 1.1,
-            }}>
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>10 Modules.</span>
-              <br />
-              <span style={{ color: 'rgba(255,255,255,0.7)' }}>17 Days.</span>
-              <br />
-              <span style={{
-                background: 'linear-gradient(135deg, #00FFD1, #1A6EFF)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}>
-                Your playbook.
-              </span>
-            </h1>
-            <div className="font-mono" style={{
-              fontSize: 12, letterSpacing: 4, color: 'rgba(255,255,255,0.4)',
-              marginTop: 32,
-            }}>
-
-            </div>
-          </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            style={{
-              position: 'absolute', bottom: '6vh',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', gap: 8, zIndex: 3,
-            }}
-          >
-            <div className="font-mono" style={{
-              fontSize: 10, letterSpacing: 4, color: 'rgba(255,255,255,0.3)',
-            }}>
-              SCROLL TO EXPLORE
-            </div>
-            <svg width="20" height="28" viewBox="0 0 20 28" fill="none">
-              <rect x="1" y="1" width="18" height="26" rx="9" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-              <motion.circle
-                cx="10" cy="8" r="2.5" fill="#00FFD1"
-                animate={{ cy: [8, 18, 8] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            </svg>
-          </motion.div>
-        </div>
-      </section>
 
       {/* ═══════════════════════════════════════════════════════════════
           SECTION 2: COURSE OVERVIEW COUNTER STRIP
@@ -471,14 +325,13 @@ export default function Landing() {
       <section
         ref={s2Ref}
         style={{
-          height: '200vh',
           position: 'relative',
+          paddingTop: '80px',
         }}
       >
         <div
           className="grid-bg"
           style={{
-            position: 'sticky', top: 0, height: '100vh',
             display: 'flex', flexDirection: 'column',
             justifyContent: 'center', alignItems: 'center',
             padding: '0 40px', overflow: 'hidden',
@@ -499,14 +352,14 @@ export default function Landing() {
                 fontSize: 11, letterSpacing: 5,
                 color: 'rgba(255,255,255,0.35)', marginBottom: 16,
               }}>
-                [ COURSE_OVERVIEW ]
+                {/* [ COURSE_OVERVIEW ] */}
               </div>
               <h2 className="font-display" style={{
                 fontSize: 'clamp(32px, 4vw, 48px)',
                 letterSpacing: '-2px',
                 marginBottom: 12,
               }}>
-                AI & The Future of Work
+                The Future of Work
               </h2>
               <p className="font-mono" style={{
                 fontSize: 13, color: 'rgba(255,255,255,0.4)',
@@ -518,7 +371,7 @@ export default function Landing() {
               </p>
             </motion.div>
 
-            {/* Counters */}
+            {/* Counters
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
@@ -528,13 +381,13 @@ export default function Landing() {
               {COURSE_STATS.map((stat, i) => (
                 <AnimatedCounter key={i} value={stat.value} label={stat.label} color={stat.color} suffix={stat.value === '10+' ? '' : ''} />
               ))}
-            </div>
+            </div> */}
 
             {/* Animated line */}
-            <motion.div style={{
+            {/* <motion.div style={{
               height: 1, background: 'rgba(255,255,255,0.15)', width: '100%',
               scaleX: s2LineScale, transformOrigin: 'left',
-            }} />
+            }} /> */}
 
             {/* Date marquee */}
             <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', marginTop: 30, opacity: 0.3 }}>
@@ -560,8 +413,8 @@ export default function Landing() {
       <section
         style={{
           position: 'relative',
-          background: '#000',
-          borderTop: '1px solid rgba(255,255,255,0.04)',
+          background: 'transparent',
+          marginTop: '-40px',
         }}
       >
         <FloatingOrbs />

@@ -37,7 +37,7 @@ export default function Timeline({ modules, timelineRef }) {
             marginBottom: 16,
           }}
         >
-          [ COURSE_ARCHITECTURE ]
+          {/* [ COURSE_ARCHITECTURE ] */}
         </div>
         <h2
           className="font-display"
