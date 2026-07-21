@@ -361,14 +361,14 @@ export default function Landing() {
               }}>
                 The Future of Work
               </h2>
-              <p className="font-mono" style={{
+              {/* <p className="font-mono" style={{
                 fontSize: 13, color: 'rgba(255,255,255,0.4)',
                 maxWidth: 650, margin: '0 auto', lineHeight: 1.7,
               }}>
                 A comprehensive deep-dive into how AI is reshaping organizations,
                 careers, competencies, and the very fabric of modern work.
                 From organizational design to ethical AI deployment — every dimension covered.
-              </p>
+              </p> */}
             </motion.div>
 
             {/* Counters
@@ -390,7 +390,7 @@ export default function Landing() {
             }} /> */}
 
             {/* Date marquee */}
-            <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', marginTop: 30, opacity: 0.3 }}>
+            {/* <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', marginTop: 30, opacity: 0.3 }}>
               <div
                 className="font-mono"
                 style={{
@@ -402,27 +402,13 @@ export default function Landing() {
               >
                 27 JULY — 12 AUGUST · CASES · GROUP ACTIVITIES · ASSESSMENTS · SCENARIO ANALYSIS · CLASS DISCUSSIONS · ROADMAP BUILDING · 27 JULY — 12 AUGUST · CASES · GROUP ACTIVITIES · ASSESSMENTS · SCENARIO ANALYSIS · CLASS DISCUSSIONS · ROADMAP BUILDING ·&nbsp;
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 3: INTERACTIVE MODULE TIMELINE
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        style={{
-          position: 'relative',
-          background: 'transparent',
-          marginTop: '-40px',
-        }}
-      >
-        <FloatingOrbs />
-        <Timeline modules={MODULES} timelineRef={timelineRef} />
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 4: STATS TICKER (KEPT)
+          SECTION: STATS TICKER
       ═══════════════════════════════════════════════════════════════ */}
       <section style={{ padding: '80px 40px', borderTop: '1px solid #111', background: '#000' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
@@ -444,85 +430,22 @@ export default function Landing() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 5: FINAL CTA (KEPT)
+          SECTION: INTERACTIVE MODULE TIMELINE
       ═══════════════════════════════════════════════════════════════ */}
-      <section style={{
-        padding: '160px 40px',
-        textAlign: 'center',
-        borderTop: '1px solid #111',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <section
+        style={{
+          position: 'relative',
+          background: 'transparent',
+          marginTop: '-40px',
+        }}
+      >
         <FloatingOrbs />
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'relative', zIndex: 1 }}
-        >
-          <div className="font-mono" style={{
-            fontSize: 11, letterSpacing: 5,
-            color: 'rgba(255,255,255,0.3)', marginBottom: 24,
-          }}>
-            [ 27 JULY — 12 AUGUST 2025 ]
-          </div>
-          <h2 className="font-display" style={{
-            fontSize: 'clamp(36px, 5.5vw, 72px)',
-            letterSpacing: '-3px',
-            marginBottom: 24,
-            lineHeight: 1.1,
-          }}>
-            Stop reading about the future.
-            <br />
-            <span style={{
-              background: 'linear-gradient(135deg, #00FFD1, #1A6EFF, #A855F7)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
-              Start shaping it.
-            </span>
-          </h2>
-          <p className="font-mono" style={{
-            fontSize: 13, color: 'rgba(255,255,255,0.4)',
-            maxWidth: 550, margin: '0 auto 40px', lineHeight: 1.7,
-          }}>
-            Walk in as a student. Walk out as a Day-1 AI-Ready Manager.
-            This isn't a course — it's your operating system for the future.
-          </p>
-
-          {/* Animated module colors strip */}
-          <div style={{
-            display: 'flex', justifyContent: 'center', gap: 6,
-            marginTop: 40,
-          }}>
-            {MODULES.map((m, i) => (
-              <motion.div
-                key={m.id}
-                initial={{ scaleY: 0 }}
-                whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.5, ease: 'easeOut' }}
-                style={{
-                  width: 4,
-                  height: 40,
-                  background: m.color,
-                  borderRadius: 2,
-                  transformOrigin: 'bottom',
-                  opacity: 0.7,
-                }}
-              />
-            ))}
-          </div>
-          <div className="font-mono" style={{
-            fontSize: 10, letterSpacing: 3,
-            color: 'rgba(255,255,255,0.25)', marginTop: 16,
-          }}>
-            10 MODULES · YOUR TRANSFORMATION
-          </div>
-        </motion.div>
+        <Timeline modules={MODULES} timelineRef={timelineRef} />
       </section>
+
+
+
+
     </>
   );
 }

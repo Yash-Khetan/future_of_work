@@ -49,7 +49,7 @@ export default function Timeline({ modules, timelineRef }) {
           }}
         >
           10 Modules.{' '}
-          <span style={{ color: '#00FFD1' }}>One Transformation.</span>
+          {/* <span style={{ color: '#00FFD1' }}></span> */}
         </h2>
         <p
           className="font-mono"
@@ -61,8 +61,7 @@ export default function Timeline({ modules, timelineRef }) {
             lineHeight: 1.6,
           }}
         >
-          Each module is a deep dive into a critical dimension of AI's impact on
-          work. Click any module to explore its learning objectives and readings.
+          Click any module to explore its learning objectives and readings.
         </p>
       </motion.div>
 
