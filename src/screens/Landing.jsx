@@ -94,18 +94,58 @@ const GlobalTypography = () => (
       background-size: 60px 60px;
     }
 
-    /* Responsive timeline */
+    /* Responsive styles */
     @media (max-width: 900px) {
-      .timeline-container .timeline-row {
+      .timeline-row {
         flex-direction: column !important;
       }
-      .timeline-container .timeline-left,
-      .timeline-container .timeline-right {
+      .timeline-left-col,
+      .timeline-right-col {
         width: 100% !important;
         padding: 0 !important;
       }
-      .timeline-container .timeline-center {
+      .timeline-center-col {
         display: none !important;
+      }
+      .timeline-center-line,
+      .timeline-center-line-fill {
+        display: none !important;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 24px !important;
+      }
+      .module-expanded-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+      }
+      .section-pad {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+      .discussion-inner {
+        padding: 28px 24px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+      }
+      .module-card-inner {
+        padding: 20px 18px !important;
+      }
+      .section-pad {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      .discussion-inner {
+        padding: 24px 20px !important;
+      }
+      .timeline-section {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
       }
     }
   `}</style>
@@ -342,6 +382,7 @@ export default function Landing() {
             justifyContent: 'center', alignItems: 'center',
             padding: '0 40px', overflow: 'hidden',
           }}
+          className="section-pad"
         >
           <FloatingOrbs />
 
@@ -416,8 +457,8 @@ export default function Landing() {
       {/* ═══════════════════════════════════════════════════════════════
           SECTION: STATS TICKER
       ═══════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 40px', borderTop: '1px solid #111', background: '#000' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
+      <section className="section-pad" style={{ padding: '80px 40px', borderTop: '1px solid #111', background: '#000' }}>
+        <div className="stats-grid" style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
           {STATS.map((s, i) => (
             <motion.div
               key={i}
@@ -436,98 +477,6 @@ export default function Landing() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION: DISCUSSION TEASER — AI & HIRING
-      ═══════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '60px 40px', background: '#000' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ maxWidth: 720, margin: '0 auto' }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              borderRadius: 22,
-              padding: 2,
-              background: 'linear-gradient(135deg, #FF6B6B, #FF8E53, #A855F7, #FF6B6B)',
-              backgroundSize: '300% 300%',
-              animation: 'gradientShift 6s ease infinite',
-            }}
-          >
-            <div
-              style={{
-                background: 'rgba(10, 10, 10, 0.95)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: 20,
-                padding: '40px 44px',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              {/* Ambient glows */}
-              <div style={{ position: 'absolute', top: -80, right: -80, width: 260, height: 260, background: 'radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
-              <div style={{ position: 'absolute', bottom: -60, left: -40, width: 200, height: 200, background: 'radial-gradient(circle, rgba(168,85,247,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
-
-              {/* Tag */}
-              <div style={{ marginBottom: 20, position: 'relative', zIndex: 1 }}>
-                <span
-                  className="font-mono"
-                  style={{
-                    fontSize: 10,
-                    letterSpacing: 3,
-                    padding: '5px 14px',
-                    borderRadius: 20,
-                    background: 'rgba(255,107,107,0.12)',
-                    border: '1px solid rgba(255,107,107,0.2)',
-                    color: '#FF6B6B',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  🎙️ Discussion Session
-                </span>
-              </div>
-
-              {/* Title */}
-              <h3
-                className="font-display"
-                style={{
-                  fontSize: 'clamp(22px, 3vw, 30px)',
-                  fontWeight: 900,
-                  letterSpacing: '-0.5px',
-                  lineHeight: 1.2,
-                  marginBottom: 12,
-                  color: '#fff',
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
-                AI & Hiring — The Talent Disruption
-              </h3>
-
-              {/* Subtitle */}
-              <p
-                className="font-mono"
-                style={{
-                  fontSize: 13,
-                  color: 'rgba(255,255,255,0.5)',
-                  lineHeight: 1.7,
-                  maxWidth: 520,
-                  position: 'relative',
-                  zIndex: 1,
-                  margin: 0,
-                }}
-              >
-                A candid discussion on how algorithms are rewriting the rules of who gets hired, who gets seen, and who gets left behind.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
           SECTION: INTERACTIVE MODULE TIMELINE
       ═══════════════════════════════════════════════════════════════ */}
       <section
@@ -541,9 +490,47 @@ export default function Landing() {
         <Timeline modules={MODULES} timelineRef={timelineRef} />
       </section>
 
-
-
-
+      {/* ═══════════════════════════════════════════════════════════════
+          FOOTER
+      ═══════════════════════════════════════════════════════════════ */}
+      <footer
+        style={{
+          padding: '60px 40px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#000',
+          textAlign: 'center',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="font-display"
+          style={{
+            fontSize: 'clamp(18px, 2.5vw, 24px)',
+            fontWeight: 700,
+            letterSpacing: '-0.5px',
+            color: '#fff',
+            marginBottom: 6,
+          }}
+        >
+          The future of work
+        </motion.div>
+        <div
+          className="font-mono"
+          style={{
+            fontSize: 12,
+            letterSpacing: 3,
+            color: 'rgba(255, 255, 255, 0.4)',
+            textTransform: 'uppercase',
+          }}
+        >
+          A leadership journey
+        </div>
+      </footer>
     </>
   );
 }

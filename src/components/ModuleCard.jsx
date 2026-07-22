@@ -33,7 +33,7 @@ export default function ModuleCard({ module, index }) {
           overflow: 'hidden',
           transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         }}
-        className="module-card"
+        className="module-card module-card-inner"
         data-color={module.color}
       >
         {/* Background glow */}
@@ -117,6 +117,27 @@ export default function ModuleCard({ module, index }) {
             >
               {module.subtitle}
             </p>
+            {module.highlight && (
+              <div
+                className="font-mono"
+                style={{
+                  marginTop: 10,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 11,
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  background: `${module.color}15`,
+                  border: `1px solid ${module.color}30`,
+                  color: module.color,
+                  lineHeight: 1.4,
+                }}
+              >
+                <span>🎙️</span>
+                <span>{module.highlight}</span>
+              </div>
+            )}
           </div>
 
           {/* Expand chevron */}
@@ -159,6 +180,7 @@ export default function ModuleCard({ module, index }) {
                   gridTemplateColumns: '1fr 1fr',
                   gap: 32,
                 }}
+                className="module-expanded-grid"
               >
                 {/* Learning Objectives */}
                 <div>

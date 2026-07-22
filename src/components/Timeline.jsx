@@ -13,6 +13,7 @@ export default function Timeline({ modules, timelineRef }) {
   return (
     <section
       ref={timelineRef}
+      className="timeline-section"
       style={{
         position: 'relative',
         padding: '80px 40px 120px',
@@ -58,6 +59,7 @@ export default function Timeline({ modules, timelineRef }) {
       <div style={{ position: 'relative' }}>
         {/* Center line (background) */}
         <div
+          className="timeline-center-line"
           style={{
             position: 'absolute',
             left: '50%',
@@ -70,6 +72,7 @@ export default function Timeline({ modules, timelineRef }) {
         />
         {/* Center line (animated fill) */}
         <motion.div
+          className="timeline-center-line-fill"
           style={{
             position: 'absolute',
             left: '50%',
@@ -89,6 +92,7 @@ export default function Timeline({ modules, timelineRef }) {
           return (
             <div
               key={module.id}
+              className="timeline-row"
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -98,6 +102,7 @@ export default function Timeline({ modules, timelineRef }) {
             >
               {/* Left card */}
               <div
+                className="timeline-left-col"
                 style={{
                   width: '46%',
                   paddingRight: isLeft ? 40 : 0,
@@ -109,6 +114,7 @@ export default function Timeline({ modules, timelineRef }) {
 
               {/* Center node */}
               <div
+                className="timeline-center-col"
                 style={{
                   width: '8%',
                   display: 'flex',
@@ -148,6 +154,7 @@ export default function Timeline({ modules, timelineRef }) {
 
               {/* Right card */}
               <div
+                className="timeline-right-col"
                 style={{
                   width: '46%',
                   paddingLeft: isLeft ? 0 : 40,

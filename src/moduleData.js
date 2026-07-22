@@ -83,6 +83,7 @@ export const MODULES = [
       'Assess Potential Impact on Career disruptions',
       'Analyze the Changing dynamics in Career and Succession Planning',
     ],
+    highlight: 'Includes a discussion on AI & Hiring',
     activity: { type: 'assessment', label: 'Self & Group Assessment' },
     readings: [
       {
