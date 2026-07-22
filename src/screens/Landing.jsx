@@ -44,6 +44,12 @@ const GlobalTypography = () => (
       50% { opacity: 1; }
     }
 
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     @keyframes timelinePulse {
       0% { transform: scale(1); opacity: 0.6; }
       100% { transform: scale(2.5); opacity: 0; }
@@ -427,6 +433,98 @@ export default function Landing() {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION: DISCUSSION TEASER — AI & HIRING
+      ═══════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: '60px 40px', background: '#000' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ maxWidth: 720, margin: '0 auto' }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              borderRadius: 22,
+              padding: 2,
+              background: 'linear-gradient(135deg, #FF6B6B, #FF8E53, #A855F7, #FF6B6B)',
+              backgroundSize: '300% 300%',
+              animation: 'gradientShift 6s ease infinite',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(10, 10, 10, 0.95)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderRadius: 20,
+                padding: '40px 44px',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Ambient glows */}
+              <div style={{ position: 'absolute', top: -80, right: -80, width: 260, height: 260, background: 'radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', bottom: -60, left: -40, width: 200, height: 200, background: 'radial-gradient(circle, rgba(168,85,247,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+              {/* Tag */}
+              <div style={{ marginBottom: 20, position: 'relative', zIndex: 1 }}>
+                <span
+                  className="font-mono"
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: 3,
+                    padding: '5px 14px',
+                    borderRadius: 20,
+                    background: 'rgba(255,107,107,0.12)',
+                    border: '1px solid rgba(255,107,107,0.2)',
+                    color: '#FF6B6B',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  🎙️ Discussion Session
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3
+                className="font-display"
+                style={{
+                  fontSize: 'clamp(22px, 3vw, 30px)',
+                  fontWeight: 900,
+                  letterSpacing: '-0.5px',
+                  lineHeight: 1.2,
+                  marginBottom: 12,
+                  color: '#fff',
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
+                AI & Hiring — The Talent Disruption
+              </h3>
+
+              {/* Subtitle */}
+              <p
+                className="font-mono"
+                style={{
+                  fontSize: 13,
+                  color: 'rgba(255,255,255,0.5)',
+                  lineHeight: 1.7,
+                  maxWidth: 520,
+                  position: 'relative',
+                  zIndex: 1,
+                  margin: 0,
+                }}
+              >
+                A candid discussion on how algorithms are rewriting the rules of who gets hired, who gets seen, and who gets left behind.
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
