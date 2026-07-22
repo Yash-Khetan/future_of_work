@@ -48,21 +48,10 @@ export default function Timeline({ modules, timelineRef }) {
             marginBottom: 16,
           }}
         >
-          10 Modules.{' '}
+          Session Details.{' '}
           {/* <span style={{ color: '#00FFD1' }}></span> */}
         </h2>
-        <p
-          className="font-mono"
-          style={{
-            fontSize: 13,
-            color: 'rgba(255,255,255,0.4)',
-            maxWidth: 600,
-            margin: '0 auto',
-            lineHeight: 1.6,
-          }}
-        >
-          Click any module to explore its learning objectives and readings.
-        </p>
+
       </motion.div>
 
       {/* Timeline container */}

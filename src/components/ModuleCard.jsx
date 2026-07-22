@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, BookOpen, Calendar, Clock, Zap } from 'lucide-react';
+import { ChevronDown, BookOpen, Zap } from 'lucide-react';
 
-const activityIcons = {
-  group: '👥',
-  case: '📋',
-  assessment: '🎯',
-  discussion: '💬',
-  scenario: '🔍',
-  roadmap: '🗺️',
-};
 
 export default function ModuleCard({ module, index }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -146,74 +138,7 @@ export default function ModuleCard({ module, index }) {
           </motion.div>
         </div>
 
-        {/* Badge row */}
-        <div
-          style={{
-            display: 'flex',
-            gap: 10,
-            marginTop: 16,
-            flexWrap: 'wrap',
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
-          {/* Date */}
-          <span
-            className="font-mono"
-            style={{
-              fontSize: 11,
-              padding: '5px 12px',
-              borderRadius: 20,
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: 'rgba(255,255,255,0.6)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-            }}
-          >
-            <Calendar size={12} />
-            {module.dates}
-          </span>
 
-          {/* Sessions */}
-          <span
-            className="font-mono"
-            style={{
-              fontSize: 11,
-              padding: '5px 12px',
-              borderRadius: 20,
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: 'rgba(255,255,255,0.6)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-            }}
-          >
-            <Clock size={12} />
-            {module.sessions} {module.sessions > 1 ? 'Sessions' : 'Session'}
-          </span>
-
-          {/* Activity */}
-          <span
-            className="font-mono"
-            style={{
-              fontSize: 11,
-              padding: '5px 12px',
-              borderRadius: 20,
-              background: `${module.color}10`,
-              border: `1px solid ${module.color}25`,
-              color: module.color,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-            }}
-          >
-            <span style={{ fontSize: 13 }}>{activityIcons[module.activity.type] || '📌'}</span>
-            {module.activity.label}
-          </span>
-        </div>
 
         {/* Expandable content */}
         <AnimatePresence>
