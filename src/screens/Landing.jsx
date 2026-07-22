@@ -587,7 +587,7 @@ export default function Landing() {
       ═══════════════════════════════════════════════════════════════ */}
       <footer
         style={{
-          padding: '60px 40px',
+          padding: '30px 40px 60px',
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
           background: '#000',
           textAlign: 'center',
@@ -600,28 +600,47 @@ export default function Landing() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="font-display"
           style={{
-            fontSize: 'clamp(18px, 2.5vw, 24px)',
-            fontWeight: 700,
-            letterSpacing: '-0.5px',
-            color: '#fff',
-            marginBottom: 6,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            gap: '10px 16px',
           }}
         >
-          The future of work
+          <span
+            className="font-display"
+            style={{
+              fontSize: 'clamp(24px, 3.5vw, 36px)',
+              fontWeight: 800,
+              letterSpacing: '-0.5px',
+              color: '#fff',
+            }}
+          >
+            The future of work
+          </span>
+          <span
+            style={{
+              fontSize: 'clamp(20px, 3vw, 28px)',
+              color: 'rgba(255, 255, 255, 0.25)',
+              fontWeight: 300,
+            }}
+          >
+            —
+          </span>
+          <span
+            className="font-mono"
+            style={{
+              fontSize: 'clamp(18px, 2.5vw, 26px)',
+              letterSpacing: 3,
+              color: 'rgba(255, 255, 255, 0.55)',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}
+          >
+            A leadership journey
+          </span>
         </motion.div>
-        <div
-          className="font-mono"
-          style={{
-            fontSize: 12,
-            letterSpacing: 3,
-            color: 'rgba(255, 255, 255, 0.4)',
-            textTransform: 'uppercase',
-          }}
-        >
-          A leadership journey
-        </div>
       </footer>
     </>
   );

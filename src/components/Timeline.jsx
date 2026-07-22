@@ -16,7 +16,7 @@ export default function Timeline({ modules, timelineRef }) {
       className="timeline-section"
       style={{
         position: 'relative',
-        padding: '80px 40px 120px',
+        padding: '80px 40px 40px',
         maxWidth: 1100,
         margin: '0 auto',
       }}

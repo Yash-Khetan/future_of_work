@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, BookOpen, Zap } from 'lucide-react';
 
+const activityIcons = {
+  group: '👥',
+  case: '📋',
+  assessment: '🎯',
+  discussion: '💬',
+  scenario: '🔍',
+  roadmap: '🗺️',
+};
 
 export default function ModuleCard({ module, index }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -138,6 +146,29 @@ export default function ModuleCard({ module, index }) {
                 <span>{module.highlight}</span>
               </div>
             )}
+
+            {/* Pedagogy / Activity Badge visible without clicking */}
+            {module.activity && (
+              <div style={{ marginTop: 12 }}>
+                <span
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    padding: '4px 12px',
+                    borderRadius: 20,
+                    background: `${module.color}10`,
+                    border: `1px solid ${module.color}25`,
+                    color: module.color,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <span style={{ fontSize: 13 }}>{activityIcons[module.activity.type] || '📌'}</span>
+                  {module.activity.label}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Expand chevron */}
@@ -159,7 +190,64 @@ export default function ModuleCard({ module, index }) {
           </motion.div>
         </div>
 
-
+        {/* Learning Objectives visible without clicking */}
+        {module.objectives && module.objectives.length > 0 && (
+          <div
+            style={{
+              marginTop: 20,
+              paddingTop: 18,
+              borderTop: '1px solid rgba(255,255,255,0.06)',
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            <div
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                letterSpacing: 3,
+                color: module.color,
+                marginBottom: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <Zap size={12} />
+              LEARNING OBJECTIVES
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {module.objectives.map((obj, i) => (
+                <li
+                  key={i}
+                  className="font-mono"
+                  style={{
+                    fontSize: 12,
+                    color: 'rgba(255,255,255,0.65)',
+                    lineHeight: 1.6,
+                    marginBottom: 8,
+                    paddingLeft: 16,
+                    position: 'relative',
+                  }}
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 6,
+                      width: 5,
+                      height: 5,
+                      borderRadius: '50%',
+                      background: module.color,
+                      opacity: 0.7,
+                    }}
+                  />
+                  {obj}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Expandable content */}
         <AnimatePresence>
@@ -173,67 +261,11 @@ export default function ModuleCard({ module, index }) {
             >
               <div
                 style={{
-                  marginTop: 24,
-                  paddingTop: 24,
+                  marginTop: 20,
+                  paddingTop: 20,
                   borderTop: '1px solid rgba(255,255,255,0.06)',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 32,
                 }}
-                className="module-expanded-grid"
               >
-                {/* Learning Objectives */}
-                <div>
-                  <div
-                    className="font-mono"
-                    style={{
-                      fontSize: 10,
-                      letterSpacing: 3,
-                      color: module.color,
-                      marginBottom: 14,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                    }}
-                  >
-                    <Zap size={12} />
-                    LEARNING OBJECTIVES
-                  </div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {module.objectives.map((obj, i) => (
-                      <motion.li
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 + 0.2 }}
-                        className="font-mono"
-                        style={{
-                          fontSize: 12,
-                          color: 'rgba(255,255,255,0.6)',
-                          lineHeight: 1.6,
-                          marginBottom: 10,
-                          paddingLeft: 16,
-                          position: 'relative',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            left: 0,
-                            top: 2,
-                            width: 5,
-                            height: 5,
-                            borderRadius: '50%',
-                            background: module.color,
-                            opacity: 0.6,
-                          }}
-                        />
-                        {obj}
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Readings */}
                 <div>
                   <div
